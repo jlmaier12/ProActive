@@ -10,8 +10,24 @@ To be clear, while ProActive labels the elevated read coverage it detcts as acti
 
 
 ### Data input for ProActive
-ProActive is user-friendly in that it only requires one input file containg read coverage summary information to run. We recommend the following workflow to get metagenomic sequence data into the correct format for input to ProActive. 
+ProActive requires one input file containg read coverage summary information to run. We recommend the following workflow to get your metagenomic sequence data into the correct format for input to ProActive. 
 
-On the command line, assemble your metagenome into contigs with MetaSPADES. Then map the metagenomic sequencing reads to the assembled contigs using BBMap. Finally, generate read mapping summaries using Pileup, a function within the BB suite of bioinformatics tools. It is very important that you use a 'binsize' of 100 to ensure resolution is not lost by averaging over larger window sizes. The .bincov100 file created with Pileup can be used directly as input for ProActive. 
+On the command line, assemble your metagenome into contigs with your favorite assembler, like MetaSPAdes. Then map the metagenomic sequencing reads to the assembled contigs using BBMap and samtools. 
+
+```bash
+user@server:~$ reformat.sh app=t in=reads.R1.fastq.gz out=./appended_rawreads_for_mapping/allreads.fastq.gz
+user@server:~$ reformat.sh app=t in=reads.R2.fastq.gz out=./appended_rawreads_for_mapping/allreads.fastq.gz
+ 
+user@server:~$ bbmap.sh -Xmx400g threads=80 ambiguous=random qtrim=lr minid=0.97 nodisk=t ref=./assemblies/WT1_meta.fasta in1=./appended_rawreads_for_mapping/allreads.fastq.gz outm=./read_mapping/readmapping.bam 
+
+user@server:~$ samtools sort readmapping.bam -o ./sorted_bams/readmapping_sorted.bam
+user@server:~$ samtools index ./sorted_bams/readmapping_sorted.bam
+```
+
+Finally, generate read mapping summaries using Pileup, a function within the BB suite of bioinformatics tools. It is very important that you use a 'binsize' of 100 to ensure resolution is not lost by averaging over larger window sizes. The .bincov100 file created with Pileup can be used directly as input for ProActive.
+
+```bash
+user@server:~$  pileup.sh in=./sorted_bams/readmapping_sorted.bam out=./coverage_stats/readcoverage_summary.pileupcovstats bincov=./coverage_stats/readcoverage_summary.bincov100 binsize=100 stdev=t
+```
 
 ### Install and run ProActive
