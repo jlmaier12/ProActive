@@ -3,7 +3,8 @@ Active prophage detection in metagenome sequencing read coverages
 
 ### Decription
 ProActive detects regions of elevated read coverage representative of active propgages in sequencing reads mapped to metagenome contigs. When a prophage activates and enters the lytic cycle, its genome begins replicating and the ratio of bacterial:phage genome in the cell begins to decrease. Because there are more phage genomes than bacterial genomes, the phage genome is overrepresented during sequencing and more reads are generated for the phage than the bacteria. When reads are mapped back to the contigs, the phage reads will map to its prophage location within the bacterial genome and due to the overabundance of phage reads, the prophage region read coverage will be elevated in comparison to the read coverage of the bacterial genome on either side of the prophage. Figure 1 from Kieft and Anantharaman (2022) is an excellent visualization of this phenomenon:
-![Alt text]( "https://journals.asm.org/cms/10.1128/msystems.00084-22/asset/dc1ff4a2-677d-4562-8be6-96ec2cd99899/assets/images/medium/msystems.00084-22-f001.gif")
+
+![Figure 1](https://github.com/jlmaier12/ProActive/assets/45083046/aa069542-91ce-4f6e-9bb9-25199d4ced6e)
 
 The increase in read coverage at prophage locations can be detected and inferences can be made about the lytic activity of the associated phage. However, in order to assess variations in read coverage between the phage and bacterial genomes, the genomic coordinates of the prophages must be known. Genomic locations of prophages are usually idenfitied, at least in part, using phage-related gene annotations. Relying on gene annotations for prophage detection means that only annotated phage are detcted while the vast majority are missed. ProActive, however, is reference-independent and therefore bypasses this barier to active prophage identification.
 
