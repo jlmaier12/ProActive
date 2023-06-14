@@ -31,3 +31,29 @@ user@server:~$  pileup.sh in=./sorted_bams/readmapping_sorted.bam out=./coverage
 ```
 
 ### Install and run ProActive
+
+##### Install ProActive:
+
+```R
+library(devtools)
+install_github("jlmaier12/ProActive")
+library(ProActive)
+```
+
+##### Run ProActive:
+
+Import your readcoverage_summary.bincov100 file:
+```R
+read_coverages <- read.delim("/readcoverage_summary.bincov100",  header=FALSE, comment.char="#")
+```
+
+Make active prophage identifications:
+```R
+active_prophages <- prophage_activity_finder_func(read_coverages) 
+```
+The object created by prophage_activity_finder_func is a list containing three objects. The first object is a table contanining the summary information for all the contigs in your metagenome. The second object is a table with the summary information for only the contigs predicted as containing active prophages. The third object is a list containing the 'shape-match' information that ProActive used to make its identifications. ProActive uses this information to rebuild the shape it used to identify an active prophage for plotting purposes. 
+
+Plot read coverage barplots of contigs predicted as containing an active prophage. The 'shape' ProActive used to make its identification for each contig will be overlayed on the barplot.:
+```R
+shape_matching_plots_WC(read_coverages, active_prophages[[3]], active_prophages[[1]]) 
+```
