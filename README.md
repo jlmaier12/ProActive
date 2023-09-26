@@ -60,7 +60,7 @@ Make active prophage identifications:
 ```R
 active_prophages <- ProActive(read_coverages) 
 ```
-The list created by prophage_activity_finder_func contains three objects. The first object is a table containing the summary prediction information for all the contigs in your metagenome. The second object is a cleaned table with the summary prediction information for only the contigs predicted as containing active prophages. The third object is a list containing the 'shape-match' information that ProActive used to make its identifications. ProActive uses the information within the third list object to rebuild the shapes it used to identify active prophages for plotting purposes. 
+The list created by prophage_activity_finder_func contains three objects. The first object is a table containing a summary for all the contigs in your metagenome with elevated read coverage at a specific location. This table provide the contig reference, the 'match-size' of the region with elevated read coverage, and the confidence of the match (yes/no) based on the pattern match. If the second greatest coverage value on a contig falls outside of the 'match-region', than the contig will be marked as **not** having a 'clear pattern'. The second object is a list containing the 'shape-match' information that ProActive used to make its identifications. ProActive uses the information within the third list object to rebuild the shapes it used to identify active prophages for plotting purposes. 
 
 Plot mapped read coverage plots of contigs predicted as containing an active prophage. The 'shape' ProActive used to make its prediction for each contig will be overlayed on the barplot.:
 ```R
