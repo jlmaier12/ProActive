@@ -36,7 +36,7 @@ user@server:~$ samtools index ./sorted_bams/readmapping_sorted.bam
 Finally, generate read mapping summaries using Pileup, a function within the BBmap suite of bioinformatics tools. It is very important that you use a 'binsize' of 100 to ensure resolution is not lost by averaging over larger window sizes. The .bincov100 file created with Pileup can be used directly as input for ProActive.
 
 ```bash
-user@server:~$  pileup.sh in=./sorted_bams/readmapping_sorted.bam out=./coverage_stats/readcoverage_summary.pileupcovstats bincov=./coverage_stats/readcoverage_summary.bincov100 binsize=100 stdev=t
+user@server:~$  pileup.sh in=readmapping_sorted.bam out=readcoverage_summary.pileupcovstats bincov=readcoverage_summary.bincov100 binsize=100 stdev=t
 ```
 
 ### Install and run ProActive
@@ -58,13 +58,13 @@ read_coverages <- read.delim("/readcoverage_summary.bincov100",  header=FALSE, c
 
 Make active prophage identifications:
 ```R
-active_prophages <- prophage_activity_finder_func(read_coverages) 
+active_prophages <- ProActive(read_coverages) 
 ```
 The list created by prophage_activity_finder_func contains three objects. The first object is a table containing the summary prediction information for all the contigs in your metagenome. The second object is a cleaned table with the summary prediction information for only the contigs predicted as containing active prophages. The third object is a list containing the 'shape-match' information that ProActive used to make its identifications. ProActive uses the information within the third list object to rebuild the shapes it used to identify active prophages for plotting purposes. 
 
 Plot mapped read coverage plots of contigs predicted as containing an active prophage. The 'shape' ProActive used to make its prediction for each contig will be overlayed on the barplot.:
 ```R
-ReadCoverageGraphs_activeprophage_func(read_coverages, active_prophages[[3]], active_prophages[[1]]) 
+ProActivePredictionPlots(read_coverages, active_prophages[[2]], active_prophages[[1]]) 
 ```
 
 ##### Notes:
