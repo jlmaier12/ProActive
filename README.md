@@ -6,7 +6,7 @@ ProActive detects regions of elevated read coverage representative of active pro
 
 Figure 1 from Kieft and Anantharaman (2022) is an excellent visualization of this phenomenon:
 
-![Figure 1](https://github.com/jlmaier12/ProActive/assets/45083046/aa069542-91ce-4f6e-9bb9-25199d4ced6e)
+![msystems 00084-22-f001](https://github.com/jlmaier12/ProActive/assets/45083046/7f1d4e54-8ae8-406e-940e-5da311718dba)
 
 **Reference** Kieft K, Anantharaman K. Deciphering Active Prophages from Metagenomes. mSystems. 2022 Apr 26;7(2):e0008422. doi: 10.1128/msystems.00084-22. Epub 2022 Mar 24. PMID: 35323045; PMCID: PMC9040807.
 
