@@ -14,3 +14,4 @@ full_prophage_func_WC(microbial_subset, windowsize)
 \description{
 Build the full prophage shape and provide it as input to the proshape_translator_func to be translated across a contig. The shape is made smaller length-wise 2000bp at a time, and the shape stops decreasing in length once it reaches 10000bp.
 }
+\keyword{internal}

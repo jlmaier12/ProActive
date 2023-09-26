@@ -20,3 +20,4 @@ activeprophage_matchsize_checker(
 \description{
 Calculate the size, in base pairs, of the matching region for prophage shapes detected in whole-community read coverages
 }
+\keyword{internal}

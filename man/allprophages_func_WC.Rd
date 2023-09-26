@@ -12,3 +12,4 @@ allprophages_func_WC(best_match_list)
 \description{
 Collects shape information associated with all contigs predicted as containing prophages based on the results from the shape_matcher function.
 }
+\keyword{internal}

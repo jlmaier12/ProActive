@@ -4,8 +4,9 @@
 #'
 #' @param microbialread_dataset A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs
 #' @param windowsize The window size used to re-average read coverage datasets
+#'
+#' @keywords internal
 shape_matcher_WC <- function (microbialread_dataset, windowsize) {
-  windowsize <- windowsize
   microbialread_dataset <- readcovdf_formatter(microbialread_dataset)
   refnames <- unique(microbialread_dataset[,1])
   best_match_list <- list()
@@ -35,7 +36,6 @@ shape_matcher_WC <- function (microbialread_dataset, windowsize) {
       next
     }
     microbial_subset <- windowsize_func(microbial_subset,windowsize)
-    microbial_subset[is.nan.data.frame(microbial_subset)] <- 0
     no_transduction_best_match <- notransduction_func_WC(microbial_subset)
     prophage_off_left_best_match <- prophage_off_left_func_WC(microbial_subset, windowsize)
     prophage_off_right_best_match <-  prophage_off_right_func_WC(microbial_subset, windowsize)
@@ -46,9 +46,13 @@ shape_matcher_WC <- function (microbialread_dataset, windowsize) {
     best_match_list[[A]] <- append(best_match, i)
     A <- A+1
   }
+  cov_check_predictions <- max_coverage_check(best_match_list, microbialread_dataset, windowsize)
   filteredout_contigs <- filteredout_contigs[!is.na(filteredout_contigs)]
-  shape_matching_summary <- list(best_match_list, filteredout_contigs)
+  shape_matching_summary <- list(cov_check_predictions[[1]], cov_check_predictions[[2]], cov_check_predictions[[3]], filteredout_contigs)
   return(shape_matching_summary)
 }
 
+#add names to items in list
+#add ratios of active prophages
+#Add max coverage check, two groups of predictions
 

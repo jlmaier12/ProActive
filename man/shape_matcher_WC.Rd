@@ -14,3 +14,4 @@ shape_matcher_WC(microbialread_dataset, windowsize)
 \description{
 Creates the microbial_subset, representative of one contig, that is used as input for each individual shape-building function. After the information associated with the best match for each shape is obtained, the shape with the lowest mean absolute difference (score) is chosen as the prediction for the contig being assessed.
 }
+\keyword{internal}

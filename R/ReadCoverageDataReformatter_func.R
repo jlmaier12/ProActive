@@ -3,6 +3,8 @@
 #' Places columns in correct order and renames columns. Clean the contig labels to remove excess informatio.
 #'
 #' @param read_dataset A table containing contig names, coverages averaged over 100bp windows, and contig positions
+#'
+#' @keywords internal
 readcovdf_formatter <- function(read_dataset) {
   column_classes <- c()
   for (i in c(1:ncol(read_dataset))) {

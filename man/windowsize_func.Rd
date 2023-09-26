@@ -14,3 +14,4 @@ windowsize_func(read_dataset, windowsize)
 \description{
 Re-averages window sizes of read coverage averages. Start with 100bp windows always. Cannot make window size less than 100bp.
 }
+\keyword{internal}

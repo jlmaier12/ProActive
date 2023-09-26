@@ -4,6 +4,8 @@
 #'
 #' @param read_dataset A read coverage dataset that has been cleaned and reformatted by the readcovdf_formatter function
 #' @param windowsize The number of base pairs to average coverage values over
+#'
+#' @keywords internal
 windowsize_func <- function(read_dataset, windowsize){ #anything divisible by 100, read_dataset should be a single contig
   coverage <- vector()
   X <- 0
@@ -17,5 +19,6 @@ windowsize_func <- function(read_dataset, windowsize){ #anything divisible by 10
   position <- seq(windowsize, length(coverage)*windowsize, windowsize)
   ref_name <- rep(read_dataset[1,1], length(position))
   newdataset <- cbind.data.frame(ref_name, coverage, position) %>% as.data.frame()
+  newdataset[is.nan.data.frame(newdataset)] <- 0
   return(newdataset)
 }

@@ -12,3 +12,4 @@ notransduction_func_WC(microbial_subset)
 \description{
 Assess whether a contig does not have a read coverage pattern associated with a transduction event. A horizontal line at the mean coverage should be an optimal match if the contig read coverage displays no transduction patterns
 }
+\keyword{internal}

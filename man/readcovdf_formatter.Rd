@@ -12,3 +12,4 @@ readcovdf_formatter(read_dataset)
 \description{
 Places columns in correct order and renames columns. Clean the contig labels to remove excess informatio.
 }
+\keyword{internal}

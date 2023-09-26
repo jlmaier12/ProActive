@@ -14,3 +14,4 @@ prophage_off_right_func_WC(microbial_subset, windowsize)
 \description{
 Build and translate and prophage shape going off the right side of the graph across a contig. Stop translating when the shape left on the contig is 10,000bp. Translate the shape 2000bp at a time.
 }
+\keyword{internal}

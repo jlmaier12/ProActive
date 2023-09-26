@@ -5,6 +5,8 @@
 #' @param predictionsummary Prediction summary table
 #' @param prophageprediction_list A list containing shape information associated with all contigs containing a potential active prophages. Generated with the allprophages_func
 #' @param windowsize The window size used to re-average read coverage datasets
+#'
+#' @keywords internal
 activeprophage_matchsize_checker <- function(predictionsummary, prophageprediction_list, windowsize){
   ref_name <- rep(NA, length(prophageprediction_list))
   match_size <- rep(NA, length(prophageprediction_list))

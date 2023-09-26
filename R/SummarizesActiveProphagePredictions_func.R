@@ -3,13 +3,20 @@
 #' Summarizes the predictions made in the shape_matcher function based on which shape match achieved the lowest mean absolute difference for each contig. Outputs results in a table rather than a list.
 #'
 #' @param best_match_list Predictions made with shape_matcher function. Predictions are stored as the first item in the best_match_list.
+#'
+#' @keywords internal
 contig_prediction_summary_WC <- function(best_match_list){
   ref_name <- rep(NA, length(best_match_list))
   predictions <- rep(NA, length(best_match_list))
+  clearpattern <- rep(NA, length(best_match_list))
+  if(length(best_match_list)==0){
+    print("no highly active/abundant prophages detected")
+  }
   for (i in seq(1,length(best_match_list),1)){
     ref_name[i] <- best_match_list[[i]][[7]]
     predictions[i] <- best_match_list[[i]][[6]]
+    clearpattern[i] <- best_match_list[[i]][[8]]
   }
-  Prediction_summary <- cbind(ref_name, predictions)
+  Prediction_summary <- cbind(ref_name, predictions, clearpattern)
   return(Prediction_summary)
 }

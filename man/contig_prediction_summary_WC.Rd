@@ -12,3 +12,4 @@ contig_prediction_summary_WC(best_match_list)
 \description{
 Summarizes the predictions made in the shape_matcher function based on which shape match achieved the lowest mean absolute difference for each contig. Outputs results in a table rather than a list.
 }
+\keyword{internal}

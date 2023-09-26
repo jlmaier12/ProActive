@@ -16,3 +16,4 @@ shape_builder_func_WC(microbial_subset, prophagepredictions, i)
 \description{
 Builds the shape (vector) associated with the 'best shape-match' information associated with each contig so it can be plotted.
 }
+\keyword{internal}

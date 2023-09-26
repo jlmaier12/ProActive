@@ -5,14 +5,14 @@
 \title{Full prophage shape shape-translator for whole-community read coverage only}
 \usage{
 proshape_translator_func_WC(
-  microbial_subset,
+  Cov_values_contig,
   best_match_info,
   windowsize,
   shape
 )
 }
 \arguments{
-\item{microbial_subset}{A subset of the read coverage dataset that pertains only to the contig currently being assessed}
+\item{Cov_values_contig}{The read coverages that pertains only to the contig currently being assessed}
 
 \item{best_match_info}{The information associated with the current best shape match. Includes the comparison score, the minimum and maximum shape y-acis values, the shape length, and the shape start and stop positions on the contig}
 
@@ -23,3 +23,4 @@ proshape_translator_func_WC(
 \description{
 Translates full prophage shape across a contig. Translate the shape 2000bp at a time. Stop translating when the prophage shape is 5000bp from the end of the contig.
 }
+\keyword{internal}

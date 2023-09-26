@@ -11,9 +11,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' shape_matching_plots_WC(whole_commreadcovs, shapematch_result[[3]],shapematch_result[[1]],1000)
+#' ProActivePredictionPlots(whole_commreadcovs, shapematch_result[[3]],shapematch_result[[1]],1000)
 #' }
-shape_matching_plots_WC <- function(microbialread_dataset, prophagepredictions,final_summary_table, windowsize = 1000) {
+ProActivePredictionPlots <- function(microbialread_dataset, prophagepredictions,final_summary_table, windowsize = 1000) {
   position <- coverage <- NULL
   windowsize <- windowsize
   microbialread_dataset <- readcovdf_formatter(microbialread_dataset)
@@ -25,7 +25,7 @@ shape_matching_plots_WC <- function(microbialread_dataset, prophagepredictions,f
     match_info <- final_summary_table[which(final_summary_table[,1]==ref_name),]
     shape <- shape_builder_func_WC(microbial_subset, prophagepredictions, i)
     shape_match <- cbind(microbial_subset, shape)
-    match_length <- match_info[,3]
+    match_length <- match_info[,4]
     print(ggplot(data=shape_match, aes(x=position, y=coverage))+
             geom_area(fill="deepskyblue3") +
             geom_line(y=shape, size=1)+
