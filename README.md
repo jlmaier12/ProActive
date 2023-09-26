@@ -45,7 +45,7 @@ user@server:~$  pileup.sh in=readmapping_sorted.bam out=readcoverage_summary.pil
 
 ```R
 library(devtools)
-install_github("jlmaier12/ProActive, ref="master")
+install_github("jlmaier12/ProActive", ref="master")
 library(ProActive)
 ```
 
