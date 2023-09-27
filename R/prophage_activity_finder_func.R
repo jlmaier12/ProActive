@@ -27,9 +27,9 @@ ProActive <- function(microbial_readdataset, windowsize = 1000){
   summary_table_prophagematchsize <- activeprophage_matchsize_checker(Prediction_summary_df, FullProphagePredictionList, windowsize)
   print("Finalizing output")
   final_summary_list<-list(summary_table_prophagematchsize, SM_prophagepredictions_list, SM_honmentions_list, filteredoutcontigs_df)
+  names(final_summary_list) <- c("SummaryTable", "ConfidentPredictions", "HonoraryMentions", "FilteredOut")
   end_time <- Sys.time()
   print(paste("Execuion time:", end_time-start_time))
-  print(table(final_summary_list[[1]][,2]))
   print(paste(length(SM_prophagepredictions_list), "contigs with reliable predictions and", length(SM_honmentions_list), "contigs with unreliable predictions"))
   return(final_summary_list)
 }
