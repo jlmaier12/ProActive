@@ -1,8 +1,8 @@
 # ProActive
-Active prophage detection in metagenome sequencing read coverages.
+Detect elevated read coverages on contigs that may be associated with active/highly abundant prophages or other mobile genetic elements, like transposases and translocases. 
 
 ### Decription
-ProActive detects regions of elevated read coverage representative of active propgages in metagenomic sequencing reads mapped to contigs. When a prophage activates and enters the lytic cycle, its genome begins replicating and the ratio of phage:bacterial genomes in the cell begins to increase. Because there are more phage genomes than bacterial genomes, during sequencing more phage reads are generated than bacterial. When these reads are mapped back to their associated contig, the read coverage of the prophage region will be elevated in comparison to the read coverage of the bacterial genome on either side of the prophage. 
+`ProActive` detects regions of elevated read coverage representative of active/highly abundant propgages in metagenomic sequencing reads mapped to contigs from an associated metagenome assembly. When a prophage activates and enters the lytic cycle, its genome begins replicating and the ratio of phage:bacterial genomes in the cell begins to increase. Because there are more phage genomes than bacterial genomes, during sequencing more phage reads are generated than bacterial. When these reads are mapped back to their associated contig, the read coverage of the prophage region will be elevated in comparison to the read coverage of the bacterial genome on either side of the prophage. 
 
 Figure 1 from Kieft and Anantharaman (2022) is an excellent visualization of this phenomenon:
 
