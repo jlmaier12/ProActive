@@ -5,18 +5,18 @@
 \title{Plot read coverage graphs of contigs with predicted active prophages in the whole-community read coverages}
 \usage{
 ProActivePredictionPlots(
-  microbialread_dataset,
-  prophagepredictions,
-  final_summary_table,
+  metagenome_pileup,
+  ProActive_shapelist,
+  ProActive_summarydf,
   windowsize = 1000
 )
 }
 \arguments{
-\item{microbialread_dataset}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
+\item{metagenome_pileup}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
 
-\item{prophagepredictions}{A list containing shape information associated with all contigs containing a potential active prophage. The third item in the list output from the main prophage_activity_finder_func}
+\item{ProActive_shapelist}{A list containing shape information associated with all contigs containing a potential active prophage. The third item in the list output from the main prophage_activity_finder_func}
 
-\item{final_summary_table}{Prediction summary table with active prophage information. The first item in the list output from the main prophage_activity_finder_func function.}
+\item{ProActive_summarydf}{Prediction summary table with active prophage information. The first item in the list output from the main prophage_activity_finder_func function.}
 
 \item{windowsize}{The window size used to re-average read coverage datasets}
 }

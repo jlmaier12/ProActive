@@ -4,10 +4,10 @@
 \alias{ProActive}
 \title{Highly active/abundant prophage prediction function}
 \usage{
-ProActive(microbial_readdataset, windowsize = 1000)
+ProActive(metagenome_pileup, windowsize = 1000)
 }
 \arguments{
-\item{microbial_readdataset}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
+\item{metagenome_pileup}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
 
 \item{windowsize}{The number of base pairs to average coverage values over. For compatibility with shape-matching, window sizes can only be 200, 500, 1000 and 2000. Larger window sizes improve processing time but the resolution of read coverage patterns may be lost. 1000bp windowsize is the default.}
 }
