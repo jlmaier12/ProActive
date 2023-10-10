@@ -4,12 +4,16 @@
 \alias{prophage_off_left_func_WC}
 \title{Prophage off-left shape-matcher for whole-community read coverage}
 \usage{
-prophage_off_left_func_WC(microbial_subset, windowsize)
+prophage_off_left_func_WC(microbial_subset, windowsize, minsize, maxsize)
 }
 \arguments{
 \item{microbial_subset}{A subset of the read coverage dataset that pertains only to the contig currently being assessed}
 
 \item{windowsize}{The window size used to re-average read coverage datasets}
+
+\item{minsize}{The minimum size of elevated read coverage that ProActive searches for. Default is 10000 base pairs.}
+
+\item{maxsize}{The minimum size of elevated read coverage that ProActive searches for. Default is the close to the length of the contig being assessed.}
 }
 \description{
 Build and translate and prophage shape going off the left side of the graph across a contig. Stop translating when the shape left on the contig is 10,000bp. Translate the shape 2000bp at a time.

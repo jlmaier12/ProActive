@@ -4,9 +4,11 @@
 #'
 #' @param microbialread_dataset A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs
 #' @param windowsize The window size used to re-average read coverage datasets
+#' @param minsize The minimum size of elevated read coverage that ProActive searches for. Default is 10000 base pairs.
+#' @param maxsize The minimum size of elevated read coverage that ProActive searches for. Default is the close to the length of the contig being assessed.
 #'
 #' @keywords internal
-shape_matcher_WC <- function (microbialread_dataset, windowsize) {
+shape_matcher_WC <- function (microbialread_dataset, windowsize, minsize, maxsize) {
   microbialread_dataset <- readcovdf_formatter(microbialread_dataset)
   refnames <- unique(microbialread_dataset[,1])
   best_match_list <- list()
@@ -16,13 +18,13 @@ shape_matcher_WC <- function (microbialread_dataset, windowsize) {
   C <- 1
   for (i in refnames) {
     if(B == floor(length(refnames)/4)){
-      print("A quarter of the way done with shape_matching")
+      cat("A quarter of the way done with shape_matching \n")
     }
     if(B == floor(length(refnames)/2)){
-      print("Half of the way done with shape_matching")
+      cat("Half of the way done with shape_matching \n")
     }
     if(B == floor((length(refnames)*3)/4)){
-      print("Almost done with shape_matching!")
+      cat("Almost done with shape_matching! \n")
     }
     B <- B+1
     microbial_subset <- microbialread_dataset[which(microbialread_dataset[,1] == i),]
@@ -37,22 +39,21 @@ shape_matcher_WC <- function (microbialread_dataset, windowsize) {
     }
     microbial_subset <- windowsize_func(microbial_subset,windowsize)
     no_transduction_best_match <- notransduction_func_WC(microbial_subset)
-    prophage_off_left_best_match <- prophage_off_left_func_WC(microbial_subset, windowsize)
-    prophage_off_right_best_match <-  prophage_off_right_func_WC(microbial_subset, windowsize)
-    full_prophage_best_match <- full_prophage_func_WC(microbial_subset, windowsize)
+    prophage_off_left_best_match <- prophage_off_left_func_WC(microbial_subset, windowsize, minsize, maxsize)
+    prophage_off_right_best_match <-  prophage_off_right_func_WC(microbial_subset, windowsize, minsize, maxsize)
+    full_prophage_best_match <- full_prophage_func_WC(microbial_subset, windowsize, minsize, maxsize)
     best_match_summary <- list(no_transduction_best_match, prophage_off_left_best_match, prophage_off_right_best_match, full_prophage_best_match)
     best_match_score_summary <- c(no_transduction_best_match[[1]],prophage_off_left_best_match[[1]], prophage_off_right_best_match[[1]], full_prophage_best_match[[1]]) %>% as.numeric()
     best_match <- best_match_summary[[which(best_match_score_summary == min(best_match_score_summary))[1]]]
-    best_match_list[[A]] <- append(best_match, i)
+    best_match_list[[A]] <- c(best_match, i)
     A <- A+1
   }
   cov_check_predictions <- max_coverage_check(best_match_list, microbialread_dataset, windowsize)
   filteredout_contigs <- filteredout_contigs[!is.na(filteredout_contigs)]
-  shape_matching_summary <- list(cov_check_predictions[[1]], cov_check_predictions[[2]], cov_check_predictions[[3]], filteredout_contigs)
+  shape_matching_summary <- list(cov_check_predictions[[1]], cov_check_predictions[[2]], cov_check_predictions[[3]], cov_check_predictions[[4]], filteredout_contigs)
   return(shape_matching_summary)
 }
 
 #add names to items in list
-#add ratios of active prophages
-#Add max coverage check, two groups of predictions
+
 

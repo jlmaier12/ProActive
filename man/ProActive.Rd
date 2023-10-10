@@ -4,12 +4,16 @@
 \alias{ProActive}
 \title{Highly active/abundant prophage prediction function}
 \usage{
-ProActive(metagenome_pileup, windowsize = 1000)
+ProActive(metagenome_pileup, windowsize = 1000, minsize = 10000, maxsize = Inf)
 }
 \arguments{
 \item{metagenome_pileup}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
 
 \item{windowsize}{The number of base pairs to average coverage values over. For compatibility with shape-matching, window sizes can only be 200, 500, 1000 and 2000. Larger window sizes improve processing time but the resolution of read coverage patterns may be lost. 1000bp windowsize is the default.}
+
+\item{minsize}{The minimum size of elevated read coverage that ProActive searches for. Default is 10000 base pairs.}
+
+\item{maxsize}{The minimum size of elevated read coverage that ProActive searches for. Default is the close to the length of the contig being assessed.}
 }
 \description{
 The main function that ties together all the other functions. This function performs all the shape-matching and summarizes the results into a list. The first item in the list is a table consisting of the summary information of all the contigs that passed through shape-matching (i.e were not filtered out). The second item in the list is a table consisting of the summary information of all contigs that were predicted as containing a potential active prophage. The third item in the list contains the best shape-match information associated with each contig in the previous table. The fourth and final object in the list is a table containing the contigs that were filtered out prior to shape_matching and the reason why.

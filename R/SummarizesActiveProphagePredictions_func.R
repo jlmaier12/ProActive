@@ -7,16 +7,16 @@
 #' @keywords internal
 contig_prediction_summary_WC <- function(best_match_list){
   ref_name <- rep(NA, length(best_match_list))
-  predictions <- rep(NA, length(best_match_list))
-  clearpattern <- rep(NA, length(best_match_list))
+  confidence <- rep(NA, length(best_match_list))
+  elev_ratio <- rep(NA, length(best_match_list))
   if(length(best_match_list)==0){
-    print("no highly active/abundant prophages detected")
+    print("no elevated read coverage detected")
   }
   for (i in seq(1,length(best_match_list),1)){
-    ref_name[i] <- best_match_list[[i]][[7]]
-    predictions[i] <- best_match_list[[i]][[6]]
-    clearpattern[i] <- best_match_list[[i]][[8]]
+    ref_name[i] <- best_match_list[[i]][[8]]
+    confidence[i] <- best_match_list[[i]][[9]]
+    elev_ratio[i] <- best_match_list[[i]][[6]]
   }
-  Prediction_summary <- cbind(ref_name, predictions, clearpattern)
+  Prediction_summary <- cbind(ref_name, confidence, elev_ratio)
   return(Prediction_summary)
 }

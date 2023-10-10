@@ -15,10 +15,9 @@
 #' }
 ProActivePredictionPlots <- function(metagenome_pileup, ProActive_shapelist,ProActive_summarydf, windowsize = 1000) {
   position <- coverage <- NULL
-  windowsize <- windowsize
   metagenome_pileup <- readcovdf_formatter(metagenome_pileup)
   for (i in seq(1,length(ProActive_shapelist),1)) {
-    ref_name <- ProActive_shapelist[[i]][[7]]
+    ref_name <- ProActive_shapelist[[i]][[8]]
     microbial_subset <- metagenome_pileup[which(metagenome_pileup[,1] == ref_name),]
     microbial_subset <- windowsize_func(microbial_subset,windowsize)
     microbial_subset[is.nan.data.frame(microbial_subset)] <- 0
@@ -26,10 +25,11 @@ ProActivePredictionPlots <- function(metagenome_pileup, ProActive_shapelist,ProA
     shape <- shape_builder_func_WC(microbial_subset, ProActive_shapelist, i)
     shape_match <- cbind(microbial_subset, shape)
     match_length <- match_info[,4]
+    elev_ratio <- match_info[,3]
     print(ggplot(data=shape_match, aes(x=position, y=coverage))+
             geom_area(fill="deepskyblue3") +
             geom_line(y=shape, size=1)+
-            labs(title=ref_name,subtitle=paste("Matching-region size (bp):", match_length), x=" ") +
+            labs(title=ref_name,subtitle=paste("Matching-region size (bp):", match_length, "Elevation ratio:", elev_ratio), x="contig position") +
             theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                   panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(size = 15)))
   }

@@ -4,12 +4,16 @@
 \alias{shape_matcher_WC}
 \title{Shape-matching function for active prophages in whole-community read coverage}
 \usage{
-shape_matcher_WC(microbialread_dataset, windowsize)
+shape_matcher_WC(microbialread_dataset, windowsize, minsize, maxsize)
 }
 \arguments{
 \item{microbialread_dataset}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
 
 \item{windowsize}{The window size used to re-average read coverage datasets}
+
+\item{minsize}{The minimum size of elevated read coverage that ProActive searches for. Default is 10000 base pairs.}
+
+\item{maxsize}{The minimum size of elevated read coverage that ProActive searches for. Default is the close to the length of the contig being assessed.}
 }
 \description{
 Creates the microbial_subset, representative of one contig, that is used as input for each individual shape-building function. After the information associated with the best match for each shape is obtained, the shape with the lowest mean absolute difference (score) is chosen as the prediction for the contig being assessed.
