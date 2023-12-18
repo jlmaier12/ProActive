@@ -30,7 +30,7 @@ $ pileup.sh in=YOUR_SORTED_INDEXED_READ_MAPPING.bam out=output.pileupcovstats bi
 ```
 The pileup_bincov100.txt file produced with `pileup.sh` can be used directly as input for ProActive.
 
-NOTE: ProActive will filter out contigs shorter than 30kbp. If your metagenome assembly consists of majority short contigs, ProActive may not be the right tool to use. 
+NOTE: ProActive will filter out contigs shorter than 30kbp. If your metagenome assembly consists of majority short contigs, ProActive may not be the right tool to use. Filtering out contigs less than 30kbp prior to read mapping will result in smaller bam and pileup files and subsequent faster processing by ProActive. 
 
 ### Install and run `ProActive`
 
@@ -42,26 +42,28 @@ install_github("jlmaier12/ProActive", ref="master")
 library(ProActive)
 ```
 
-##### Run `ProActive`:
+##### Using `ProActive`:
 
 Import your pileup file:
 ```R
-read_coverages <- read.delim("pileup_bincov100.txt",  header=FALSE, comment.char="#")
+my_pileup <- read.delim("pileup_bincov100.txt",  header=FALSE, comment.char="#")
 ```
 
 Run `ProActive()`:
 ```R
-ProActiveResults <- ProActive(pileup=cage1readmapping, mode="metagenome", windowsize=2000, minsize=10000, maxsize=80000, chunksize=NA, cleanup=TRUE) 
+ProActiveResults <- ProActive(pileup=my_pileup, mode="metagenome", windowsize=2000, minsize=10000, maxsize=80000, chunksize=NA, cleanup=TRUE) 
 ```
 Input parameters:
 - pileup: Your pileup file with 100bp binsizes (aka windowsize)
 - mode: Either "genome" or "metagenome". 
 - windowsize: Either 200, 500, 1000 and 2000. The number of base pairs to average coverage values over. Larger window sizes improve processing time but the resolution of read coverage patterns may be lost. 1000bp windowsize is the default.
-- minsize: The minimum size (in base pairs) of elevated read coverage you would like ProActive to search for. Default is 10000.
-- maxsize: The maximum size (in base pairs) of elevated read coverage you would like ProActive to search for. Default is NA (i.e no upper limit set).
-- chunksize: If mode="genome", ProActive will 'chunk' the genome to search for a region of elevated read coverage on each chunk. ProActive can only identify one elevated region per chunk!  
+- minsize: The minimum size (in base pairs) of elevated read coverage you would like ProActive to search for. Default is 10000. Value should be divisible by 100. 
+- maxsize: The maximum size (in base pairs) of elevated read coverage you would like ProActive to search for. Default is NA (i.e no upper limit set). Value should be divisible by 100.
+- chunksize: If mode="genome", ProActive will 'chunk' the genome to search for a region of elevated read coverage on each chunk. Since ProActive can only identify one region of elevated read coverage per 'chunk', choosing smaller chunks will increase sensitivity AND processing time. Default is 100,000bp per chunk, with the exception of the last chunk which is the remainder number of base pairs once the genome has been evenly 'chunked'. Chunk size should be divisible by 100. 
 - cleanup: Either TRUE or FALSE. ProActive will clean and reformat your input pileup_bincov100.txt file for proper compatibility with functions of ProActive if cleanup=TRUE. Default is TRUE. 
 
+
+Output:
 The output of `ProActive()` is a list. Assign list items of interest to their own variables for further use:
 ```R
 summarytable <- ProActiveResults$SummaryTable
@@ -70,31 +72,62 @@ C_PatternMatches <- ProActiveResults$ConfidentPatternMatches
 NC_PatternMatches <- ProActiveResults$NotConfidentPatternMatches
 FilterOutSummaryTable <- ProActiveResults$FilteredOut
 ```
-- ProActiveResults$SummaryTable
-- ProActiveResults$VeryConfidentPatternMatches
-- ProActiveResults$ConfidentPatternMatches
-- ProActiveResults$NotConfidentPatternMatches
+- ProActiveResults$SummaryTable: A dataframe containing the results of ProActive's pattern-matching on each contig or genome chunk. The table contains the confidence of each pattern match and the associated match size, start and stop positions, and elevation ratio. 
+- ProActiveResults$VeryConfidentPatternMatches: Pattern matches where all the coverage values within the pattern match region are the largest coverage values on the contig or genome chunk. 
+- ProActiveResults$ConfidentPatternMatches: Pattern matches where the maximum coverage value for the contig or genome chunk falls within the pattern match region.
+- ProActiveResults$NotConfidentPatternMatches: Pattern matches where the maximum coverage value for the contig or genome chunk does NOT fall within the pattern match region.
 - ProActiveResults$FilteredOut: A dataframe containing the contigs or genome chunks that were filtered out due to being shorter than 30kbp or having low read coverage. 
 
 Plot mapped read coverage plots of contigs or genome chunks detected with regions of elevated read coverage. The 'block-like' pattern that ProActive used to make its prediction for each contig/genome chunk will be overlayed on the barplot in black:
 ```R
-#plot confident predictions
-ProActivePredictionPlots(pileup=cage1readmapping, ProActiveResults=ProActiveResults, ProActive_shapelist=C_PatternMatches, elevation_filter=1.5, cleanup=TRUE)
+#plot confident predictions (C_PatternMatches) that have an associated elevated:not-elevated read coverage ratio (elevation_filter) of 1.5 or greater
+ProActivePredictionPlots(pileup=my_pileup, ProActiveResults=ProActiveResults, ProActive_shapelist=C_PatternMatches, elevation_filter=1.5, cleanup=TRUE)
 ```
-- pileup
-- ProActiveResults
-- ProActive_shapelist
-- elevation_filter
-- cleanup
+- pileup: Your pileup file with 100bp binsizes (aka windowsize)
+- ProActiveResults: The output of `ProActive()`
+- ProActive_shapelist: Either the ProActiveResults$VeryConfidentPatternMatches, ProActiveResults$ConfidentPatternMatches, or ProActiveResults$NotConfidentPatternMatches from the ProActive output. 
+- elevation_filter: Only plot contigs or genome chunks with a pattern match greater than a specified mean elevated:non-elevated read coverage ratio value. Default is NA. 
+- cleanup: Either TRUE or FALSE. ProActive will clean and reformat your input pileup_bincov100.txt file for proper compatibility with functions of ProActive if cleanup=TRUE. Default is TRUE. 
 
-Search for gene annotations of interest:
+
+##### Search for gene annotations of interest:
+
+Generating your gff file:
+Your gff file may be generated with any annotation tool. If you are annotating metagenome contigs, it is a good idea to only annotate contigs greater than 30kbp as `ProActive()` filters out contigs less than 30kbp.  
 
 gff file format:
-Depending on how your gff file was generated, it may contain additional information above and below the table containing gene annotations. To import your gff file to R, it must have this additional inforamtion removed. The easiest way to do this is to select only the necessary information from your gff and copy it to a new file. This can be done on the command line using the following code:
+Depending on how your gff file was generated, it may contain additional information above and below the main table containing gene annotation information. To import your gff file to R, it must have this additional inforamtion removed. The easiest way to do this is to select only the necessary information from your gff and copy it to a new file. This can be done on the command line using grep. Using nano, open your gff file to see what information it contains. Scroll down until you reach the tab-seperated table containing the gene annotation information. The first column should contain the reference names for your contigs or genome. The reference name should begin with a common identifier which can be used to extract the associated lines and move them to a new file with grep. 
 ```bash
-$ grep 
+$ grep ^COMMON_IDENTIFIER geneannots.gff > cleaned_geneannots.gff 
 ```
 
+Import your gff file to R:
 ```R
-GeneAnnotationSearch <- function(ProActiveResults, ProActive_shapelist, pileup, gene_annots, geneorproduct, keywords, genelocation="nonspecific", bprange = 0, cleanup=TRUE, specificcontig) 
+gene_annotations <- read.delim("cleaned_geneannots.gff", header=FALSE)
 ```
+Your gff file should have columns in the following order: contig or genome reference (i.e "NODE_#"), tool (i.e "prodigal"), CDS, start position, stop position, '.', '+/-', '0', annotations.
+
+Clean and reformat your gff file with ProActive's built-in function. This only needs to be done once:
+```R
+clean_gene_annotations <- gff_cleanup(gene_annotations)
+```
+
+Search for gene annotations matching of interest:
+```R
+GeneAnnotationSearch(ProActiveResults=ProActiveResults, ProActive_shapelist=C_PatternMatches, pileup=my_pileup, gene_annots=clean_gene_annotations, geneorproduct="product", keywords=c("phage","tail","spike","needle"), genelocation="specific", bprange = 0, cleanup=TRUE, specificcontig=NA) 
+```
+Input parameters:
+- ProActiveResults: The output of `ProActive()`
+- ProActive_shapelist: Either the ProActiveResults$VeryConfidentPatternMatches, ProActiveResults$ConfidentPatternMatches, or ProActiveResults$NotConfidentPatternMatches from the ProActive output. 
+- pileup: Your pileup file with 100bp binsizes (aka windowsize)
+- gene_annots: A gff file that has been 'cleaned' with `gff_cleanup()`
+- geneorproduct: Either "gene" or "product".
+- keywords: The gene or product annotation key-word(s) you would like to search for. Case independent. Key-word(s) must be in quotes, comma-separated, and surrounded by c() i.e( c("antibiotic", "resistance", "drug") )
+- genelocation: "specific" or "nonspecific". Search for gene-annotations that match provided keywords only within the pattern-match region with "specific" or search the entire contig or genome chunk for matching annotations with nonspecific". Default is "nonspecific".
+- bprange: If you are searching for gene annotations with genelocation="specific", you may specify the region (in basepairs) that should be searched to the left and right of the pattern match in addition to the pattern match region itself. Default is 0 (if you choose genelocation="specific" and don't set the bprange, ProActive will only search for matching gene annotations within the pattern-match region)
+- cleanup: Either TRUE or FALSE. ProActive will clean and reformat your input pileup_bincov100.txt file for proper compatibility with functions of ProActive if cleanup=TRUE. Default is TRUE. 
+- specificcontig: Search for gene annotations matching the provided keywords only on a specific contig or genome chunk. Provide contig or genome chunk reference name in quotes.
+
+
+Output:
+`GeneAnnotationSearch()` will print read coverage plots for contigs or genome chunks that contain gene annotations that match the provided keyword(s). The locations of the matching gene annotations will be displated on the graph with black vertical lines. The start and stop position of the associated ProActive pattern-match are displayed with red vertical lines. The graphs are plotted without re-averaging the windowsizes in order to provide better resolution of gene annotation locations. 
