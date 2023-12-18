@@ -1,10 +1,10 @@
 Package: ProActive
 Type: Package
-Title: Prophage activity detector
+Title: ProActive
 Version: 0.1.0
 Author: Jessie Maier
 Maintainer: Jessie Maier <jlmaier@ncsu.edu>
-Description: Detects active prophages in mapped read coverages from metagenomic sequencing using a reference-independent shape-matching approach.
+Description: Detects regions of elevated read coverage in mapped read coverages from metagenomic sequencing using a reference-independent pattern-matching approach.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
