@@ -4,10 +4,14 @@
 \alias{max_coverage_check}
 \title{Checks for max coverage outside match region}
 \usage{
-max_coverage_check(best_match_list, microbialread_dataset, windowsize)
+max_coverage_check(best_match_list, microbialread_dataset, windowsize, mode)
 }
 \arguments{
-\item{microbial_subset}{}
+\item{windowsize}{The number of base pairs to average coverage values over. For compatibility with shape-matching, window sizes can only be 200, 500, 1000 and 2000. Larger window sizes improve processing time but the resolution of read coverage patterns may be lost. 1000bp windowsize is the default.}
+
+\item{mode}{Either "genome" or "metagenome"}
+
+\item{microbial_subset}{A subset of the read coverage dataset that pertains only to the contig currently being assessed}
 }
 \description{
 Checks for max coverage outside match region

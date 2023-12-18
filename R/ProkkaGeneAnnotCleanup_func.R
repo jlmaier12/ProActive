@@ -1,12 +1,12 @@
-#' Prokka gff file reformatter
+#' gff file reformatter
 #'
-#' Prokka gene annotations cleanup
+#' gff gene annotations cleanup
 #'
 #' @param gff_file A gff file containing gene annotation information from Prokka. Your gff file should have columns in the following order: contig (i.e "NODE_#"), tool (i.e "prodigal"), CDS, start position, stop position, '.', '+/-', '0', annotations.
 #'
 #' @export
 #'
-prokka_cleanup <- function(gff_file) {
+gff_cleanup <- function(gff_file) {
   V9 <- NULL
   gff_df <- gff_file[-c(2,3,6,7,8)] #***need to fix this so correct columns are choosen every time
   colnames(gff_df)[1] <- "ref_name"

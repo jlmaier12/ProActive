@@ -4,10 +4,12 @@
 \alias{readcovdf_formatter}
 \title{Correctly formats input read coverage summary files.}
 \usage{
-readcovdf_formatter(read_dataset)
+readcovdf_formatter(read_dataset, mode)
 }
 \arguments{
 \item{read_dataset}{A table containing contig names, coverages averaged over 100bp windows, and contig positions}
+
+\item{mode}{Either "genome" or "metagenome"}
 }
 \description{
 Places columns in correct order and renames columns. Clean the contig labels to remove excess informatio.

@@ -4,10 +4,21 @@
 \alias{contig_prediction_summary_WC}
 \title{Summarizes best shape-matches into a table}
 \usage{
-contig_prediction_summary_WC(best_match_list)
+contig_prediction_summary_WC(
+  metagenome_pileup,
+  best_match_list,
+  windowsize,
+  mode
+)
 }
 \arguments{
+\item{metagenome_pileup}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
+
 \item{best_match_list}{Predictions made with shape_matcher function. Predictions are stored as the first item in the best_match_list.}
+
+\item{windowsize}{The number of base pairs to average coverage values over. For compatibility with shape-matching, window sizes can only be 200, 500, 1000 and 2000. Larger window sizes improve processing time but the resolution of read coverage patterns may be lost. 1000bp windowsize is the default.}
+
+\item{mode}{Either "genome" or "metagenome"}
 }
 \description{
 Summarizes the predictions made in the shape_matcher function based on which shape match achieved the lowest mean absolute difference for each contig. Outputs results in a table rather than a list.

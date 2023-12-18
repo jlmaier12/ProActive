@@ -4,9 +4,10 @@
 #'
 #' @param read_dataset A read coverage dataset that has been cleaned and reformatted by the readcovdf_formatter function
 #' @param windowsize The number of base pairs to average coverage values over
+#' @param mode Either "genome" or "metagenome"
 #'
 #' @keywords internal
-windowsize_func <- function(read_dataset, windowsize){ #anything divisible by 100, read_dataset should be a single contig
+windowsize_func <- function(read_dataset, windowsize, mode){ #anything divisible by 100, read_dataset should be a single contig
   coverage <- vector()
   X <- 0
   Y <- windowsize/100
@@ -16,9 +17,14 @@ windowsize_func <- function(read_dataset, windowsize){ #anything divisible by 10
     Y <- Y+(windowsize/100)
     if (Y > nrow(read_dataset)) break
   }
+  if(mode=="genome"){
+    position <- seq(read_dataset[1,3], read_dataset[nrow(read_dataset),3], length.out=length(coverage))
+  } else {
   position <- seq(windowsize, length(coverage)*windowsize, windowsize)
+  }
   ref_name <- rep(read_dataset[1,1], length(position))
   newdataset <- cbind.data.frame(ref_name, coverage, position) %>% as.data.frame()
   newdataset[is.nan.data.frame(newdataset)] <- 0
   return(newdataset)
 }
+

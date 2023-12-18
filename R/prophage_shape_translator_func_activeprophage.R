@@ -16,7 +16,7 @@ proshape_translator_func_WC <- function(Cov_values_contig, best_match_info, wind
     if(shape[length(shape)-(10000/windowsize)]>min_shape_cov) break
     diff <- mean(abs(Cov_values_contig - shape))
     if (diff < best_match_info[[1]]){
-      elevation_ratio <- min(shape)/max(shape)
+      elevation_ratio <- max(shape)/min(shape)
       start_pos <- which(shape==max(shape))[1]
       end_pos <- which(shape==max(shape))[length(which(shape==max(shape)))]
       best_match_info <- list(diff, min_shape_cov, max_shape_cov, start_pos, end_pos, elevation_ratio)

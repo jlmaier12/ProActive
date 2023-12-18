@@ -18,23 +18,19 @@ prophage_off_left_func_WC <- function (microbial_subset, windowsize, minsize, ma
   Cov_values_contig <- microbial_subset[,2]
   startingcoverages <- seq((min_read_cov+threequarter_read_cov), max_read_cov, maxread_cov_steps)
   startingmincoverages <- seq(min_read_cov,(min_read_cov+quarter_read_cov), minread_cov_steps)
-  if ((nrow(microbial_subset)-(10000/windowsize))>maxsize/windowsize){
-    shape_length <- maxsize/windowsize
-  } else {
-    shape_length <- nrow(microbial_subset)-(10000/windowsize)
-  }
+  shape_length <- ifelse ((nrow(microbial_subset)-(10000/windowsize))>(maxsize/windowsize),maxsize/windowsize,nrow(microbial_subset)-(10000/windowsize))
   nonshape <- nrow(microbial_subset)-shape_length
   shape <- c(rep(startingcoverages[1], shape_length), rep(min_read_cov, nonshape))
   diff <- mean(abs(Cov_values_contig - shape))
   end_pos <- (which(shape == min(shape))[1])-1
-  elevation_ratio <- min(shape)/max(shape)
+  elevation_ratio <- max(shape)/min(shape)
   best_match_info <- list(diff, min_read_cov, startingcoverages[1], 1, end_pos, elevation_ratio)
   for(cov in startingcoverages) {
     min_read_cov <- min(microbial_subset[,2])
     shape <- c(rep(cov, shape_length), rep(min_read_cov, nonshape))
     repeat {
       if (diff < best_match_info[[1]]){
-        elevation_ratio <- min(shape)/max(shape)
+        elevation_ratio <- max(shape)/min(shape)
         best_match_info <- list(diff, min_read_cov, cov, 1, end_pos, elevation_ratio)
       }
       if (length(which(shape==cov))<= 2000/windowsize) break
@@ -47,7 +43,7 @@ prophage_off_left_func_WC <- function (microbial_subset, windowsize, minsize, ma
       shape <- c(rep(cov, shape_length), rep(mincov, nonshape))
       repeat {
         if (diff < best_match_info[[1]]){
-          elevation_ratio <- min(shape)/max(shape)
+          elevation_ratio <- max(shape)/min(shape)
           best_match_info <- list(diff, mincov, cov, 1, end_pos, elevation_ratio)
         }
         if (length(which(shape==cov))<= 2000/windowsize) break
@@ -58,6 +54,6 @@ prophage_off_left_func_WC <- function (microbial_subset, windowsize, minsize, ma
       }
     }
   }
-  best_match_results <- append(best_match_info, "prophage")
+  best_match_results <- c(best_match_info, "prophage")
   return(best_match_results)
 }

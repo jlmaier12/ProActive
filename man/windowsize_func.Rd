@@ -4,12 +4,14 @@
 \alias{windowsize_func}
 \title{Change the read coverage window size}
 \usage{
-windowsize_func(read_dataset, windowsize)
+windowsize_func(read_dataset, windowsize, mode)
 }
 \arguments{
 \item{read_dataset}{A read coverage dataset that has been cleaned and reformatted by the readcovdf_formatter function}
 
 \item{windowsize}{The number of base pairs to average coverage values over}
+
+\item{mode}{Either "genome" or "metagenome"}
 }
 \description{
 Re-averages window sizes of read coverage averages. Start with 100bp windows always. Cannot make window size less than 100bp.

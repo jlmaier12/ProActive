@@ -14,9 +14,11 @@ activeprophage_matchsize_checker <- function(predictionsummary, prophagepredicti
     ref_name[i] <- prophageprediction_list[[i]][[8]]
     start_pos <- prophageprediction_list[[i]][[4]]
     end_pos <- prophageprediction_list[[i]][[5]]
-    match_size[i] <- length(c(start_pos:end_pos)) *windowsize
+    match_size[i] <- (length(c(start_pos:end_pos))-1) *windowsize
   }
-  match_lengthsummary_table <- cbind(match_size, ref_name)
+  match_lengthsummary_table <- cbind.data.frame(match_size, ref_name)
   summary_allcontigs_withmatchlength <- merge(predictionsummary, match_lengthsummary_table, by="ref_name", all.x=TRUE)
   return(summary_allcontigs_withmatchlength)
 }
+
+
