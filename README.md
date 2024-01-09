@@ -30,7 +30,7 @@ $ pileup.sh in=YOUR_SORTED_INDEXED_READ_MAPPING.bam out=output.pileupcovstats bi
 ```
 The pileup_bincov100.txt file produced with `pileup.sh` can be used directly as input for ProActive.
 
-NOTE: ProActive will filter out contigs shorter than 30kbp. If your metagenome assembly consists of majority short contigs, ProActive may not be the right tool to use. Filtering out contigs less than 30kbp prior to read mapping will result in smaller bam and pileup files and subsequent faster processing by ProActive. 
+NOTE: ProActive will filter out contigs shorter than 30kbp. If your metagenome assembly consists of majority short contigs, ProActive may not be the right tool to use. Filtering out contigs less than 30kbp prior to read mapping will result in smaller bam and pileup files and subsequent faster processing by ProActive. Hint: filtering contigs by length can be done easily with BBMap's `reformat.sh` function (`reformat.sh in=contigs.fasta out=filtered_contigs.fasta, minlength=30000`)
 
 ### Install and run `ProActive`
 
