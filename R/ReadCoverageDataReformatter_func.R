@@ -17,7 +17,7 @@ readcovdf_formatter <- function(read_dataset, mode) {
         position_colindex <- i
       }
     } else {
-    if (length(which(read_dataset[,i]==100))>1){
+    if (length(which(read_dataset[,i]==0))==0){
       position_colindex <- i
     }
     }
