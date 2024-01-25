@@ -12,6 +12,17 @@ shape_builder_func_WC <- function(microbial_subset, prophagepredictions, i){
   max_read_cov <- prophagepredictions[[i]][[3]]
   start_pos <- prophagepredictions[[i]][[4]]
   end_pos <- prophagepredictions[[i]][[5]]
+  prediction <- prophagepredictions[[i]][[7]]
+  if(prediction == "Gap") {
+    if (start_pos==1) {
+      shape <- c(rep(min_read_cov,end_pos), rep(max_read_cov, (nrow(microbial_subset)-end_pos)))
+    } else if (end_pos == nrow(microbial_subset)){
+      shape <- c(rep(max_read_cov, start_pos), rep(min_read_cov, (nrow(microbial_subset)-start_pos)))
+    } else{
+      match_region <- end_pos-start_pos
+      shape <- c(rep(max_read_cov, start_pos), rep(min_read_cov, match_region), rep(max_read_cov, (nrow(microbial_subset)-(match_region+start_pos))))
+    }
+  } else {
   if (start_pos==1) {
     shape <- c(rep(max_read_cov,end_pos), rep(min_read_cov, (nrow(microbial_subset)-end_pos)))
   } else if (end_pos == nrow(microbial_subset)){
@@ -19,6 +30,7 @@ shape_builder_func_WC <- function(microbial_subset, prophagepredictions, i){
   } else{
     match_region <- end_pos-start_pos
     shape <- c(rep(min_read_cov, start_pos), rep(max_read_cov, match_region), rep(min_read_cov, (nrow(microbial_subset)-(match_region+start_pos))))
+  }
   }
   return(shape)
 }

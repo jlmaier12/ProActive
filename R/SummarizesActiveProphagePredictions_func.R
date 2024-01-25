@@ -14,6 +14,7 @@ contig_prediction_summary_WC <- function(metagenome_pileup,best_match_list, wind
   elev_ratio <- rep(NA, length(best_match_list))
   start_pos <- rep(NA, length(best_match_list))
   stop_pos <- rep(NA, length(best_match_list))
+  prediction <- rep(NA, length(best_match_list))
   if(length(best_match_list)==0){
     cat("no elevated read coverage detected \n")
   }
@@ -24,9 +25,10 @@ contig_prediction_summary_WC <- function(metagenome_pileup,best_match_list, wind
     contig <- windowsize_func(contig, windowsize, mode)
     confidence[i] <- best_match_list[[i]][[9]]
     elev_ratio[i] <- best_match_list[[i]][[6]]
+    prediction[i] <- best_match_list[[i]][[7]]
     start_pos[i] <- contig[best_match_list[[i]][[4]],3]
     stop_pos[i] <- contig[best_match_list[[i]][[5]],3]
   }
-  Prediction_summary <- cbind.data.frame(ref_name, confidence, elev_ratio, start_pos, stop_pos)
+  Prediction_summary <- cbind.data.frame(ref_name, prediction, confidence, elev_ratio, start_pos, stop_pos)
   return(Prediction_summary)
 }

@@ -42,13 +42,16 @@ shape_matcher <- function (microbialread_dataset, windowsize, minsize, maxsize, 
     prophage_off_left_best_match <- prophage_off_left_func_WC(microbial_subset, windowsize, minsize, maxsize)
     prophage_off_right_best_match <-  prophage_off_right_func_WC(microbial_subset, windowsize, minsize, maxsize)
     full_prophage_best_match <- full_prophage_func_WC(microbial_subset, windowsize, minsize, maxsize)
-    best_match_summary <- list(no_transduction_best_match, prophage_off_left_best_match, prophage_off_right_best_match, full_prophage_best_match)
-    best_match_score_summary <- c(no_transduction_best_match[[1]],prophage_off_left_best_match[[1]], prophage_off_right_best_match[[1]], full_prophage_best_match[[1]]) %>% as.numeric()
+    Full_RCgap_best_match <- full_RCgap_func(microbial_subset, windowsize, minsize, maxsize)
+    RCgap_offLeft_best_match <- RCgap_off_left_func(microbial_subset, windowsize, minsize, maxsize)
+    RCgap_offRight_best_match <- RCgap_off_right_func(microbial_subset, windowsize, minsize, maxsize)
+    best_match_summary <- list(no_transduction_best_match, prophage_off_left_best_match, prophage_off_right_best_match, full_prophage_best_match, Full_RCgap_best_match,RCgap_offLeft_best_match, RCgap_offRight_best_match)
+    best_match_score_summary <- c(no_transduction_best_match[[1]],prophage_off_left_best_match[[1]], prophage_off_right_best_match[[1]], full_prophage_best_match[[1]], Full_RCgap_best_match[[1]], RCgap_offLeft_best_match[[1]], RCgap_offRight_best_match[[1]]) %>% as.numeric()
     best_match <- best_match_summary[[which(best_match_score_summary == min(best_match_score_summary))[1]]]
     best_match_list[[A]] <- c(best_match, i)
     A <- A+1
   }
-  cov_check_predictions <- max_coverage_check(best_match_list, microbialread_dataset, windowsize, mode)
+  cov_check_predictions <- maxmin_coverage_check(best_match_list, microbialread_dataset, windowsize, mode)
   filteredout_contigs <- filteredout_contigs[!is.na(filteredout_contigs)]
   shape_matching_summary <- list(cov_check_predictions[[1]], cov_check_predictions[[2]], cov_check_predictions[[3]], cov_check_predictions[[4]], filteredout_contigs)
   return(shape_matching_summary)

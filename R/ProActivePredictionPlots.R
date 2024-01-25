@@ -29,7 +29,7 @@ ProActivePredictionPlots <- function(pileup, ProActiveResults, ProActive_shapeli
   for (i in seq(1,length(ProActive_shapelist),1)) {
     ref_name <- ProActive_shapelist[[i]][[8]]
     match_info <- ProActive_summarydf[which(ProActive_summarydf[,1]==ref_name),]
-    elev_ratio <- round(match_info[,3], digits=3)
+    elev_ratio <- round(match_info[,4], digits=3)
     if (is.na(elevation_filter) == FALSE) {
       if (elev_ratio < elevation_filter) next
     }
@@ -37,8 +37,8 @@ ProActivePredictionPlots <- function(pileup, ProActiveResults, ProActive_shapeli
     microbial_subset <- windowsize_func(microbial_subset,windowsize, mode)
     shape <- shape_builder_func_WC(microbial_subset, ProActive_shapelist, i)
     shape_match <- cbind(microbial_subset, shape)
-    match_length <- match_info[,6]
-    elev_ratio <- round(match_info[,3], digits=3)
+    match_length <- match_info[,7]
+    elev_ratio <- round(match_info[,4], digits=3)
     print(ggplot(data=shape_match, aes(x=position, y=coverage))+
             geom_area(fill="deepskyblue3") +
             geom_line(y=shape, size=1)+

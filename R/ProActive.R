@@ -35,7 +35,7 @@ ProActive <- function(pileup, mode, windowsize = 1000, minsize=10000, maxsize=In
   cat("Identifying potential active/abundant MGEs \n")
   Prediction_summary_df <- contig_prediction_summary_WC(pileup, FullProphagePredictionList, windowsize, mode)
   cat("Determining sizes (bp) of potential active/abundant MGEs \n")
-  summary_table_matchsize <- activeprophage_matchsize_checker(Prediction_summary_df, FullProphagePredictionList, windowsize)
+  summary_table_matchsize <- matchsize_checker(Prediction_summary_df, FullProphagePredictionList, windowsize)
   cat("Finalizing output \n")
   final_summary_list<-list(summary_table_matchsize, SM_conf_prophagepredictions_list, SM_prophagepredictions_list, SM_honmentions_list, filteredoutcontigs_df, windowsize, mode, chunksize)
   names(final_summary_list) <- c("SummaryTable", "VeryConfidentPatternMatches", "ConfidentPatternMatches", "NotConfidentPatternMatches", "FilteredOut", "Windowsize", "Mode", "Chunksize")
