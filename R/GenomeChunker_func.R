@@ -13,7 +13,6 @@ GenomeChunks <- function(genome_pileup, chunk_size) {
   Y <- chunk_size
   Z <- 1
   repeat {
-  #genome_chunk <- genome_pileup[X:Y,]
   ref_name[c(X:Y)] <- rep(paste0(genome_ref,"_chunk_", Z), chunk_size)
   if(Z==max(genome_pileup$position)%/%(chunk_size*100)) break
   X <- X+chunk_size

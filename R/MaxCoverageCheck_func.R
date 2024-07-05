@@ -19,7 +19,7 @@ maxmin_coverage_check <- function (best_match_list, microbialread_dataset, windo
     best_match_info <- best_match_list[[index]]
     prediction <- best_match_info[[7]]
     if(prediction=="None") {
-    NonePredictions[[C]] <- best_match_info
+    NonePredictions[[C]] <- c(best_match_info,NA)
     C <- C+1
     next
     }

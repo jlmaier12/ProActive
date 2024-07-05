@@ -13,6 +13,7 @@ shape_matcher <- function (microbialread_dataset, windowsize, minsize, maxsize, 
   refnames <- unique(microbialread_dataset[,1])
   best_match_list <- list()
   filteredout_contigs <- rep(NA, length(refnames))
+  reason <- rep(NA, length(refnames))
   A <- 1
   B <- 1
   C <- 1
@@ -28,12 +29,14 @@ shape_matcher <- function (microbialread_dataset, windowsize, minsize, maxsize, 
     }
     B <- B+1
     microbial_subset <- microbialread_dataset[which(microbialread_dataset[,1] == i),]
-    if (microbial_subset[nrow(microbial_subset),3]< 30000) {
+     if (microbial_subset[nrow(microbial_subset),3]< 30000) {
       filteredout_contigs[C] <- i
+      reason[C] <- "Too Short"
       C <- C+1
       next
     } else if (microbial_subset[(order(microbial_subset[,2], decreasing=TRUE))[50],2] <= 10) {
       filteredout_contigs[C] <-  i
+      reason[C] <- "Low read cov"
       C <- C+1
       next
     }
@@ -52,8 +55,9 @@ shape_matcher <- function (microbialread_dataset, windowsize, minsize, maxsize, 
     A <- A+1
   }
   cov_check_predictions <- maxmin_coverage_check(best_match_list, microbialread_dataset, windowsize, mode)
-  filteredout_contigs <- filteredout_contigs[!is.na(filteredout_contigs)]
-  shape_matching_summary <- list(cov_check_predictions[[1]], cov_check_predictions[[2]], cov_check_predictions[[3]], cov_check_predictions[[4]], filteredout_contigs)
+  filteredout_contigsdf <- cbind.data.frame(filteredout_contigs, reason)
+  filteredout_contigsdf <- na.omit(filteredout_contigsdf)
+  shape_matching_summary <- list(cov_check_predictions[[1]], cov_check_predictions[[2]], cov_check_predictions[[3]], cov_check_predictions[[4]], filteredout_contigsdf)
   return(shape_matching_summary)
 }
 

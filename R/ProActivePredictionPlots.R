@@ -14,36 +14,49 @@
 #' \dontrun{
 #' ProActivePredictionPlots(whole_commreadcovs, ProActiveResults, ProActiveResults$ExtraConfidentPredictions,cleanup=TRUE)
 #' }
-ProActivePredictionPlots <- function(pileup, ProActiveResults, ProActive_shapelist, elevation_filter=NA, cleanup=TRUE) {
+ProActivePredictionPlots <- function(pileup, ProActiveResults, ProActive_shapelist, elevation_filter=NA,cleanup=TRUE) {
   position <- coverage <- NULL
-  windowsize <- ProActiveResults[[6]]
-  mode <- ProActiveResults[[7]]
-  chunksize <- ProActiveResults[[8]]
-  ProActive_summarydf <- ProActiveResults[[1]]
+  if (length(ProActiveResults)==9){
+    windowsize <- ProActiveResults[[7]]
+    mode <- ProActiveResults[[8]]
+    chunksize <- ProActiveResults[[9]]
+    ProActive_summarydf <- ProActiveResults[[1]]
+  }else {
+    windowsize <- ProActiveResults[[6]]
+    mode <- ProActiveResults[[7]]
+    chunksize <- ProActiveResults[[8]]
+    ProActive_summarydf <- ProActiveResults[[1]]
+  }
   if(cleanup==TRUE){
     pileup <- readcovdf_formatter(pileup, mode)
   }
+  plots <- list()
+  ref_names <- c()
   if (mode=="genome"){
     pileup <- GenomeChunks(pileup, chunksize)
   }
   for (i in seq(1,length(ProActive_shapelist),1)) {
     ref_name <- ProActive_shapelist[[i]][[8]]
+    ref_names <- c(ref_names, ref_name)
     match_info <- ProActive_summarydf[which(ProActive_summarydf[,1]==ref_name),]
-    elev_ratio <- round(match_info[,4], digits=3)
+    prediction <- match_info[,2]
+    elev_ratio <- ifelse(prediction=="None","NA",round(match_info[,4], digits=3))
     if (is.na(elevation_filter) == FALSE) {
       if (elev_ratio < elevation_filter) next
     }
     microbial_subset <- pileup[which(pileup[,1] == ref_name),]
     microbial_subset <- windowsize_func(microbial_subset,windowsize, mode)
-    shape <- shape_builder_func_WC(microbial_subset, ProActive_shapelist, i)
+    shape <- shape_builder_func(microbial_subset, ProActive_shapelist, i)
     shape_match <- cbind(microbial_subset, shape)
     match_length <- match_info[,7]
-    elev_ratio <- round(match_info[,4], digits=3)
-    print(ggplot(data=shape_match, aes(x=position, y=coverage))+
-            geom_area(fill="deepskyblue3") +
-            geom_line(y=shape, size=1)+
+    plot <- ggplot(data=shape_match, aes(x=position, y=coverage))+
+            geom_area(data=shape_match, aes(x=position, y=coverage), fill="deepskyblue3") +
+            geom_line(y=shape, linewidth=1)+
             labs(title=ref_name,subtitle=paste("Matching-region size (bp):", match_length, "Elevation ratio:", elev_ratio), x="contig position") +
             theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                  panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(size = 15)))
+                  panel.background = element_blank(), axis.line = element_line(colour = "black"),text = element_text(size = 15))
+    plots[[i]] <- plot
   }
+  names(plots) <- ref_names
+  return(plots)
 }

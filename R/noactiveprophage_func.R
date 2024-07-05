@@ -22,6 +22,6 @@ notransduction_func_WC <- function (microbial_subset) {
     best_match_score <- diff
     best_cov <- cov
   }
-  best_match_info <- list(best_match_score, best_cov, nrow(microbial_subset), "NA", "NA", "NA", "None")
+  best_match_info <- list(best_match_score, best_cov, nrow(microbial_subset), 1, length(shape), NA, "None")
   return(best_match_info)
 }

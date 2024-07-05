@@ -13,4 +13,5 @@
 #' @import dplyr
 #' @import tidyr
 #' @import stringr
+#' @import stats
 NULL

@@ -8,7 +8,7 @@
 #' @param mode Either "genome" or "metagenome"
 #'
 #' @keywords internal
-contig_prediction_summary_WC <- function(metagenome_pileup,best_match_list, windowsize, mode){
+contig_prediction_summary <- function(metagenome_pileup,best_match_list, windowsize, mode){
   ref_name <- rep(NA, length(best_match_list))
   confidence <- rep(NA, length(best_match_list))
   elev_ratio <- rep(NA, length(best_match_list))
@@ -16,7 +16,7 @@ contig_prediction_summary_WC <- function(metagenome_pileup,best_match_list, wind
   stop_pos <- rep(NA, length(best_match_list))
   prediction <- rep(NA, length(best_match_list))
   if(length(best_match_list)==0){
-    cat("no elevated read coverage detected \n")
+    cat("no elevated or depressed read coverage regions detected \n")
   }
   for (i in seq(1,length(best_match_list),1)){
     ref_name[i] <- best_match_list[[i]][[8]]
