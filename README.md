@@ -22,13 +22,11 @@ ProActive's read coverage pattern-matching is only as good as the provided data.
 
 ### Data input for `ProActive`
 
-Map your sequencing read to the associated genome or metagenome contigs. Any read mapper can be used, however we recommend using [BBMap](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/installation-guide/) with `ambiguous=random`, `qtrim=lr`, and `minid=0.97`. 
-
-Create pileup files using `BBMap` `pileup.sh` with 100 bp window sizes:
+Create mapping pileup files using [`BBMap`](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/installation-guide/) with 100 bp covbinsize/window sizes:
 ```{bash}
-$ pileup.sh in=YOUR_SORTED_READ_MAPPING.bam out=output.pileupcovstats bincov=pileup_bincov100.txt binsize=100 stdev=t
+$  bbmap.sh ambiguous=random minid=0.97 reference=Contigs.fa in1=R1reads.fa in2=R2reads.fa bincov=pileup_file.txt covbinsize=100
 ```
-The pileup_bincov100.txt file produced with `pileup.sh` can be used directly as input for ProActive.
+The pileup_file.txt file can be used directly as input for ProActive.
 
 NOTE: ProActive will filter out contigs shorter than 30kbp. If your metagenome assembly consists of majority short contigs, ProActive may not be the right tool to use. Filtering out contigs less than 30kbp prior to read mapping will result in smaller bam and pileup files and subsequent faster processing by ProActive. 
 Hint: filtering contigs by length can be done easily with BBMap's `reformat.sh` function (`reformat.sh in=contigs.fasta out=filtered_contigs.fasta minlength=30000`)
@@ -47,12 +45,12 @@ library(ProActive)
 
 Import your pileup file:
 ```R
-my_pileup <- read.delim("pileup_bincov100.txt",  header=FALSE, comment.char="#")
+my_pileup <- read.delim("pileup_file.txt",  header=FALSE, comment.char="#")
 ```
 
 Run `ProActive()`:
 ```R
-ProActiveResults <- ProActive(pileup=my_pileup, mode="metagenome", windowsize=2000, minsize=10000, maxsize=80000, chunksize=NA, nones=FALSE, cleanup=TRUE) 
+ProActiveResults <- ProActive(pileup=my_pileup, mode="metagenome", windowsize=1000, minsize=10000, maxsize=80000, chunksize=NA, nones=FALSE, cleanup=TRUE) 
 ```
 Input parameters:
 - pileup: Your pileup file with 100bp binsizes (aka windowsize)
