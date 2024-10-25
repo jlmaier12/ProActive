@@ -16,7 +16,7 @@
 #' \dontrun{
 #'ProActive_results <- ProActive(pileup=whole_commreadcoverages, mode="metagenome", windowsize=1000, minsize=10000, maxsize=50000, cleanup=TRUE)
 #'}
-ProActive <- function(pileup, mode, windowsize = 1000, minsize=10000, maxsize=Inf, chunksize=100000, nones=TRUE, cleanup=FALSE){
+ProActive <- function(pileup, mode, windowsize = 1000, minsize=10000, maxsize=Inf, chunksize=100000, nones=TRUE, cleanup=TRUE){
   start_time <- Sys.time()
   if (cleanup==TRUE){
     pileup <- readcovdf_formatter(pileup, mode)
