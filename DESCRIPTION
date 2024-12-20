@@ -1,12 +1,31 @@
 Package: ProActive
 Type: Package
+BiocType: Software
 Title: ProActive
-Version: 0.1.0
-Author: Jessie Maier
-Maintainer: Jessie Maier <jlmaier@ncsu.edu>
+Version: 0.99.0
+Authors@R: 
+  c(person(given = "Jessie",
+           family = "Maier",
+           role = c("aut", "cre"),
+           email = "jlmaier@ncsu.edu",
+           comment = c(ORCID = "0009-0001-8575-5386")))
 Description: Detects regions of elevated read coverage in mapped read coverages from metagenomic sequencing using a reference-independent pattern-matching approach.
 License: GPL-2
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.2.3
-Depends: dplyr, ggplot2, stringr, tidyr
+LazyData: false
+RoxygenNote: 7.3.2
+biocViews: Coverage, Metagenomics, PatternLogic, Classification, Sequencing
+URL: https://github.com/jlmaier12/ProActive
+BugReports: https://github.com/jlmaier12/ProActive/issues
+Depends: 
+    dplyr,
+    ggplot2,
+    R (>= 3.5),
+    stringr,
+    tidyr
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
