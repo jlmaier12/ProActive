@@ -1,66 +1,76 @@
-#' Shape-matching function for active MGE in mapped read coverages
+#' Controller function for pattern-matching
 #'
-#' Creates the pileupSubset, representative of one contig, that is used as input for each individual shape-building function. After the information associated with the best match for each shape is obtained, the shape with the lowest mean absolute difference (score) is chosen as the prediction for the contig being assessed.
+#' Creates the pileupSubset, representative of one contig/chunk, used as input for
+#' each individual pattern-matching function. After the information associated with
+#' the best match for each pattern is obtained, the pattern-match with the lowest
+#' mean absolute difference (match-score) is used for classification.
 #'
-#' @param pileup A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs
-#' @param windowSize The window size used to re-average read coverage datasets
-#' @param minSize The minimum size of elevated read coverage that ProActive searches for. Default is 10000 base pairs.
-#' @param maxSize The minimum size of elevated read coverage that ProActive searches for. Default is the close to the length of the contig being assessed.
-#' @param mode Either "genome" or "metagenome"
-#' @param minContigLength
-#'
+#' @param pileup A .txt file containing mapped sequencing read coverages averaged over
+#' 100 bp windows/bins.
+#' @param windowSize The number of basepairs to average read coverage values over.
+#' @param minSize The minimum size (in bp) of elevation or gap patterns. Default is 10000.
+#' @param maxSize The maximum size (in bp) of elevation or gap patterns. Default is NA
+#' (i.e. no maximum).
+#' @param mode Either "genome" or "metagenome".
+#' @param minContigLength The minimum contig/chunk size (in bp) to perform pattern-matching
+#' on. Default is 25000.
+#' @importFrom stats na.omit
 #' @keywords internal
-patternMatcher <- function (pileup, windowSize, minSize, maxSize, mode, minContigLength) {
-  refNames <- unique(pileup[,1])
+patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContigLength) {
+  refNames <- unique(pileup[, 1])
   bestMatchList <- list()
   filteredOutContigs <- rep(NA, length(refNames))
   reason <- rep(NA, length(refNames))
   A <- 1
   B <- 1
   C <- 1
-  lapply(seq_along(refNames),function(i){
+  lapply(seq_along(refNames), function(i) {
     refName <- refNames[[i]]
-    if(B == floor(length(refNames)/4)){
+    if (B == floor(length(refNames) / 4)) {
       message("A quarter of the way done with pattern-matching")
     }
-    if(B == floor(length(refNames)/2)){
+    if (B == floor(length(refNames) / 2)) {
       message("Half of the way done with pattern-matching")
     }
-    if(B == floor((length(refNames)*3)/4)){
+    if (B == floor((length(refNames) * 3) / 4)) {
       message("Almost done with pattern-matching!")
     }
-    B <<- B+1
-    pileupSubset <- pileup[which(pileup[,1] == refName),]
-     if ((nrow(pileupSubset) * 100) < minContigLength) {
-     #if (pileupSubset[nrow(pileupSubset),3]< minContigLength) {
+    B <<- B + 1
+    pileupSubset <- pileup[which(pileup[, 1] == refName), ]
+    if ((nrow(pileupSubset) * 100) < minContigLength) {
+      # if (pileupSubset[nrow(pileupSubset),3]< minContigLength) {
       filteredOutContigs[C] <<- refName
       reason[C] <<- "Too Short"
-      C <<- C+1
+      C <<- C + 1
       return(NULL)
-    } else if (pileupSubset[(order(pileupSubset[,2], decreasing=TRUE))[50],2] <= 10) {
-      filteredOutContigs[C] <<-  refName
+    } else if (pileupSubset[(order(pileupSubset[, 2], decreasing = TRUE))[50], 2] <= 10) {
+      filteredOutContigs[C] <<- refName
       reason[C] <<- "Low read cov"
-      C <<- C+1
+      C <<- C + 1
       return(NULL)
     }
-    pileupSubset <- changewindowSize(pileupSubset,windowSize, mode)
+    pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
     noPatternBestMatch <- noPattern(pileupSubset)
     partialElevBestMatch <- partialElevGap(pileupSubset, windowSize, minSize, maxSize)
     fullElevBestMatch <- fullElevGap(pileupSubset, windowSize, minSize, maxSize, "Elevation")
     fullGapBestMatch <- fullElevGap(pileupSubset, windowSize, minSize, maxSize, "Gap")
-    bestMatchSumm <- list(noPatternBestMatch,
-                          partialElevBestMatch[[1]],
-                          partialElevBestMatch[[2]],
-                          fullElevBestMatch,
-                          fullGapBestMatch)
-    bestMatchScoreSumm <- c(noPatternBestMatch[[1]],
-                            partialElevBestMatch[[1]][[1]],
-                            partialElevBestMatch[[2]][[1]],
-                            fullElevBestMatch[[1]],
-                            fullGapBestMatch[[1]]) %>% as.numeric()
+    bestMatchSumm <- list(
+      noPatternBestMatch,
+      partialElevBestMatch[[1]],
+      partialElevBestMatch[[2]],
+      fullElevBestMatch,
+      fullGapBestMatch
+    )
+    bestMatchScoreSumm <- c(
+      noPatternBestMatch[[1]],
+      partialElevBestMatch[[1]][[1]],
+      partialElevBestMatch[[2]][[1]],
+      fullElevBestMatch[[1]],
+      fullGapBestMatch[[1]]
+    )
     bestMatch <- bestMatchSumm[[which(bestMatchScoreSumm == min(bestMatchScoreSumm))[1]]]
     bestMatchList[[A]] <<- c(bestMatch, refName)
-    A <<- A+1
+    A <<- A + 1
   })
   classifQualities <- classifQuality(bestMatchList, pileup, windowSize, mode)
   filteredOutContigsdf <- na.omit(cbind.data.frame(filteredOutContigs, reason))

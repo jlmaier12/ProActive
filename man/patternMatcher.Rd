@@ -2,24 +2,30 @@
 % Please edit documentation in R/patternMatcher.R
 \name{patternMatcher}
 \alias{patternMatcher}
-\title{Shape-matching function for active MGE in mapped read coverages}
+\title{Controller function for pattern-matching}
 \usage{
 patternMatcher(pileup, windowSize, minSize, maxSize, mode, minContigLength)
 }
 \arguments{
-\item{pileup}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
+\item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
+100 bp windows/bins.}
 
-\item{windowSize}{The window size used to re-average read coverage datasets}
+\item{windowSize}{The number of basepairs to average read coverage values over.}
 
-\item{minSize}{The minimum size of elevated read coverage that ProActive searches for. Default is 10000 base pairs.}
+\item{minSize}{The minimum size (in bp) of elevation or gap patterns. Default is 10000.}
 
-\item{maxSize}{The minimum size of elevated read coverage that ProActive searches for. Default is the close to the length of the contig being assessed.}
+\item{maxSize}{The maximum size (in bp) of elevation or gap patterns. Default is NA
+(i.e. no maximum).}
 
-\item{mode}{Either "genome" or "metagenome"}
+\item{mode}{Either "genome" or "metagenome".}
 
-\item{minContigLength}{}
+\item{minContigLength}{The minimum contig/chunk size (in bp) to perform pattern-matching
+on. Default is 25000.}
 }
 \description{
-Creates the pileupSubset, representative of one contig, that is used as input for each individual shape-building function. After the information associated with the best match for each shape is obtained, the shape with the lowest mean absolute difference (score) is chosen as the prediction for the contig being assessed.
+Creates the pileupSubset, representative of one contig/chunk, used as input for
+each individual pattern-matching function. After the information associated with
+the best match for each pattern is obtained, the pattern-match with the lowest
+mean absolute difference (match-score) is used for classification.
 }
 \keyword{internal}

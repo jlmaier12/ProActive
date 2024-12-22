@@ -9,45 +9,78 @@ ProActive(
   mode,
   gffTSV,
   windowSize = 1000,
+  chunkContigs = FALSE,
   minSize = 10000,
   maxSize = Inf,
   minContigLength = 30000,
-  chunkSize = 50000,
+  chunkSize = 1e+05,
   IncludeNoPatterns = FALSE,
   saveFilesTo
 )
 }
 \arguments{
-\item{pileup}{A pileup file for either a genome or metagenome containing mapped read coverages averaged over 100 bp window sizes}
+\item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
+100 bp windows/bins.}
 
 \item{mode}{Either "genome" or "metagenome"}
 
-\item{gffTSV}{Optional,}
+\item{gffTSV}{Optional, a .gff file (TSV) containing ORFs associated with the .fasta
+file used to generate the pileup.}
 
-\item{windowSize}{The number of base pairs to average coverage values over. Must be either 200, 500, or 1000. Larger window sizes improve processing time but the resolution of read coverage patterns may be lost. 1000 is the default.}
+\item{windowSize}{The number of basepairs to average read coverage values over.
+Options are 100, 200, 500, 1000 ONLY. Default is 1000.}
 
-\item{minSize}{The minimum size (in bp) of elevated/gapped read coverage to detect. Default is 10000.}
+\item{chunkContigs}{TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+will be performed on each subset. Default is FALSE.}
 
-\item{maxSize}{The minimum size (in bp) of elevated/gapped read coverage to detect. Default is NA (i.e no maximum).}
+\item{minSize}{The minimum size (in bp) of elevation or gap patterns. Default is 10000.}
 
-\item{chunkSize}{If mode="genome", ProActive will split your genome into chunks to search for elevated read coverage. Since ProActive can only identify one elevated read coverage pattern per 'chunk', choosing smaller chunks will increase sensitivity AND processing time. Default is 100000 (bp per chunk).}
+\item{maxSize}{The maximum size (in bp) of elevation or gap patterns. Default is NA
+(i.e. no maximum).}
 
-\item{IncludeNoPatterns}{TRUE or FALSE. Default is FALSE. TRUE if you would like to include the contigs classified as 'none' in your final pattern lists. This can be useful if you are comparing ProActive results between conditions.}
+\item{minContigLength}{The minimum contig/chunk size (in bp) to perform pattern-matching
+on. Default is 25000.}
 
-\item{saveFilesTo}{Optional, Provide a path to the directory you wish to save output to. A folder will be made within the provided directory to store results.}
+\item{chunkSize}{If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
+chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
+`chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.}
+
+\item{IncludeNoPatterns}{TRUE or FALSE, If TRUE the noPattern pattern-matches will
+be included in the ProActive PatternMatches output list. If you would like to visualize
+the noPattern pattern-matches in `plotProActiveResults()`, this should be set to TRUE.}
+
+\item{saveFilesTo}{Optional, Provide a path to the directory you wish to save
+output to. A folder will be made within the provided directory to store
+results.}
+}
+\value{
+A list containing 6 objects described in the function description.
 }
 \description{
 Performs read coverage pattern-matching and summarizes the results into a list.
-The first item in the list is a table consisting of the summary information of all the
-contigs that passed through shape-matching (i.e were not filtered out). The second item
-in the list is a table consisting of the summary information of all contigs that were
-predicted as containing a potential active prophage. The third item in the list contains
-the best shape-match information associated with each contig in the previous table. The
-fourth and final object in the list is a table containing the contigs that were filtered
-out prior to shape_matching and the reason why.
+ The first list item summarizes the pattern-matching results. The second list
+item is the 'cleaned' version of the summary table with all the 'noPattern'
+classifications removed. (i.e were not filtered out). The third list item contains
+the pattern-match information needed for pattern-match visualization with
+`plotProActiveResults()`. The fourth list item is a table containing all the contigs that
+were filtered out prior to pattern-matching. The fifth list item contains arguments used during
+pattern-matching (windowSize, mode, chunkSize, chunkContigs). If the user provides a
+gffTSV files, then the last list is a table consisting of ORFs found within
+the detected gaps and elevations in read coverage.
 }
 \examples{
-\dontrun{
-ProActive_results <- ProActive(pileup=whole_commreadcoverages, mode="metagenome")
-}
+## Metagenome mode
+metagenome_results <- ProActive(
+  pileup = sampleMetagenomePileup,
+  mode = "metagenome",
+  gffTSV = sampleMetagenomegffTSV
+)
+
+## Genome mode
+genome_results <- ProActive(
+  pileup = sampleGenomePileup,
+  mode = "genome",
+  gffTSV = sampleGenomegffTSV
+)
 }

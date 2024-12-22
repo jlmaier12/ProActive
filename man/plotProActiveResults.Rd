@@ -2,29 +2,41 @@
 % Please edit documentation in R/plotProActiveResults.R
 \name{plotProActiveResults}
 \alias{plotProActiveResults}
-\title{Plot read coverage graphs of contigs with predicted active prophages in the whole-community read coverages}
+\title{Plot results of `ProActive()` pattern-matching}
 \usage{
 plotProActiveResults(
   pileup,
   ProActiveResults,
   qualityFilter = NA,
-  elevFilter = NA
+  elevFilter = NA,
+  saveFilesTo
 )
 }
 \arguments{
-\item{pileup}{A table containing contig names, coverages averaged over 100bp windows, and contig positions associated with mapping whole-community reads to whole-community contigs}
+\item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
+100 bp windows/bins.}
 
-\item{ProActiveResults}{The result from `ProActive()`}
+\item{ProActiveResults}{The output from `ProActive()`.}
 
-\item{qualityFilter}{A list containing pattern information associated with all contigs containing a potential active prophage. The second, third or fourth item in the list output from ProActive()}
+\item{qualityFilter}{Optional, only plot results with pattern-matches that achieved
+a specified quality level. Options are "high", "okay", and "poor". Default is NA
+(i.e. no filter).}
 
-\item{elevFilter}{Default is NA. The user may define an elevation factor in which any plots with elevated read coverages below the elevation factor are not displayed}
+\item{elevFilter}{Optional, only plot results with pattern-matches that achieved an
+elevation ratio (max/min) greater than the specified values. Defualt is NA (i.e. no filter).}
+
+\item{saveFilesTo}{Optional, Provide a path to the directory you wish to save
+output to. A folder will be made within the provided directory to store
+results.}
+}
+\value{
+A list containing ggplot objects
 }
 \description{
-Plot the read coverages of a contig and its associated pattern-match for each contig with a predicted active prophage.
+Plot read coverage of contigs/chunks with detected gaps and elevations and their
+associated pattern-match.
 }
 \examples{
-\dontrun{
-plotProActiveResults(whole_commreadcovs, ProActiveResults, ProActiveResults$ExtraConfidentclassifications)
-}
+ProActivePlots <- plotProActiveResults(sampleMetagenomePileup,
+                                       sampleMetagenomeResults)
 }

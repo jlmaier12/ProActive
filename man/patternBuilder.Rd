@@ -2,18 +2,19 @@
 % Please edit documentation in R/patternBuilder.R
 \name{patternBuilder}
 \alias{patternBuilder}
-\title{pattern-builder for patterns detected in whole-community read coverages}
+\title{Builds pattern-match vectors}
 \usage{
-patternBuilder(pileupSubset, classifList, i)
+patternBuilder(pileupSubset, bestMatchList)
 }
 \arguments{
-\item{pileupSubset}{A subset of the read coverage dataset that pertains only to the contig currently being assessed}
+\item{pileupSubset}{A subset of the pileup that pertains only to the contig/chunk
+currently being assessed.}
 
-\item{classifList}{A list containing pattern information associated with all contigs classified by ProActive}
-
-\item{i}{The index position associated with the current contig's best pattern-match information}
+\item{bestMatchList}{A list containing pattern-match information associated with
+all contigs/chunks classified by `ProActive()` pattern-matching}
 }
 \description{
-Builds the pattern (vector) associated with the 'best pattern-match' information associated with each contig so it can be plotted.
+Builds the pattern-match (vector) associated with each contig/chunk for
+visualization.
 }
 \keyword{internal}

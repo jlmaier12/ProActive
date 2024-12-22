@@ -2,60 +2,84 @@
 title: "ProActive"
 author: "Jessie Maier"
 output: 
-  BiocStyle::html_document:
+  rmarkdown::html_vignette:
     toc: true
     toc_depth: 2
+description: >
+  The `ProActive` R package automatically detects regions of gapped and elevated 
+  read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize 
+  and visualize read coverage patterns in both genomes and metagenomes. Optionally, 
+  users may provide gene annotations associated with their genome or metagenome 
+  in the form of a .gff file. In this case, `ProActive` will generate an additional 
+  output table containing the ORFs found within the detected regions of gapped 
+  and elevated read coverage.
 vignette: >
-  %\VignetteIndexEntry{ProActiveVignette}
+  %\VignetteIndexEntry{ProActive}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  out.width = "100%",
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup, echo=FALSE, warning=FALSE}
+```{r setup, echo=FALSE, warning=FALSE, include=FALSE}
 library(ProActive)
 library(kableExtra)
 library(ggplot2)
+library(stringr)
+library(dplyr)
 ```
 
 # Introduction
-ProActive uses a pattern-matching algorithm to detect elevations and gaps in mapped sequencing read coverages. 
-Read coverage patterns can have biological significance and recently, more attention has been drawn to the importance
-of inspecting read coverages when analyzing your data (ref). 
+
+`ProActive` automatically detects regions of gapped and elevated read coverage 
+using a pattern-matching algorithm. `ProActive` can detect, characterize and 
+visualize read coverage patterns in both genomes and metagenomes. Optionally, 
+users may provide gene annotations associated with their genome or metagenome 
+in the form of a .gff file. In this case, `ProActive` will generate an additional 
+output table containing the ORFs found within the detected regions of gapped 
+and elevated read coverage.
+
+Analyzing coverage data is important because gaps or elevations in coverage can 
+provide insight into a community's (metagenome) or organism's (genome) genetic 
+activity, for example-
 
 Elevations in read coverage can be an indication of highly
-active and/or abundant mobile genetic elements (MGEs). MGEs that are actively replicating or are highly abundant 
-will generate more sequencing reads than the rest of their host 
-bacterium's chromosome. This may create a region of elevated read coverage at 
-the element's insertion site(s) in the genome. Examples  
+active and/or abundant mobile genetic elements (MGEs). MGEs that are actively 
+replicating or are highly abundant will generate more sequencing reads than the 
+rest of their host bacterium's genome creating a region of elevated 
+read coverage at the element's insertion site(s).   
 
-Gaps in read coverage can indicate heterogeneity of the bacterial genome sequence. Genetic deletions and/or MGEs im subpopulations of bacteria may form gaps or dips in mapped read coverages. 
+Gaps in read coverage can indicate heterogeneity of the bacterial genome sequence. 
+Subpopulations of bacteria with and without a specific gene sequence may form 
+gaps or dips in mapped read coverages. Genetic regions with high mutation rates 
+may also generate gaps in read coverage.
 
-Despite the importance of read coverage , a limitation of tools requires that researchers manually inspect read coverages, a process which is time-consuming and therefor unrealistic in many cases. 
-ProActive can operate on both metagenomes and genomes. A gff file with open reading frames (ORFs)
+## Acknowledgments
+I'd like to thank Dr. Manuel Kleiner for his expertise and overall support 
+throughout the development of ProActive!
 
 
 # Installation
-## BioConductor install
+## CRAN install
 ```{r, eval=FALSE}
-if (!require("BiocManager", quietly = TRUE)) {
-    install.packages("BiocManager")
+if (!require("pak", quietly = TRUE)) {
+  install.packages("pak")
 }
 
-BiocManager::install("ProActive")
-library(ProActive)
+pak::pak("jlmaier12/TrIdent")
+library(TrIdent)
 ```
 
 ## GitHub install
 ```{r, eval=FALSE}
 if (!require("devtools", quietly = TRUE)) {
-    install.packages("devtools")
+  install.packages("devtools")
 }
 
 devtools::install_github("jlmaier12/ProActive")
@@ -64,32 +88,33 @@ library(ProActive)
 
 # Input data
 
-##pileups
+## Pileups
 
 ProActive detects read coverage patterns using a pattern-matching algorithm that 
 operates on pileup files. A pileup file is a file format where each row 
 summarizes the 'pileup' of reads at specific genomic locations. Pileup files 
 can be used to generate a rolling mean of read coverages and associated base 
 pair positions which reduces data size while 
-preserving read coverage patterns. **ProActive requires that input pileups files 
-be generated using a 100 bp window/bin size.**  
+preserving read coverage patterns. **ProActive requires that input pileups files** 
+**be generated using a 100 bp window/bin size.**  
 
-Pileup files can be generated by either mapping sequencing reads to either a metagenome or genome fasta. **Read** 
-**mapping should be performed using a high minimum identity (0.97 or higher)** 
-**and random mapping of ambiguous reads.** The pileup files needed for ProActive 
-are generated using the .bam files produced during read mapping. 
+Pileup files can be generated by either mapping sequencing reads to either a 
+metagenome or genome fasta. **Read mapping should be performed using a high** 
+**minimum identity (0.97 or higher) and random mapping of ambiguous reads.** The 
+pileup files needed for ProActive are generated using the .bam files produced 
+during read mapping. 
 
 Some read mappers, like 
 [BBMap](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbmap-guide/), 
-will allow for the generation of pileup files in the 
+allow for the generation of pileup files in the 
 [`bbmap.sh`](https://github.com/BioInfoTools/BBMap/blob/master/sh/bbmap.sh) 
-command with the use of the `bincov` output with the `covbinsize=100` 
+command with use of the `bincov` output with the `covbinsize=100` 
 parameter/argument. **Otherwise, BBMap's** 
 **[`pileup.sh`](https://github.com/BioInfoTools/BBMap/blob/master/sh/pileup.sh)** 
 **can convert .bam files produced by any read mapper to pileup files** 
 **compatible with ProActive using the `bincov` output with `binsize=100`.**
 
-**The input pileup file must have the following format:**
+**The input pileup file for metagenomes must have the following format:**
 **Pileup file must use a 100 bp window/bin size for the rolling** 
 **mean.** 
 
@@ -103,32 +128,57 @@ start of each new contig.
 start of each new contig.
 
 ```{r echo=FALSE}
-data(sampleMetagenomePileup)
 kable(head(sampleMetagenomePileup), row.names = FALSE) %>%
-    kable_styling(latex_options = "HOLD_position")
+  kable_styling(latex_options = "HOLD_position")
 ```
+
+**Note that the format for a genome pileup will be slightly different! The third** 
+**column (V3) does not restart and the fourth column (V4) starts from 0.** 
 
 ## gff TSV
-ProActive optionally accepts a .gff file as input. The .gff file must be associated with the same metagenome or genome used to create your pileup file. The .gff file should be a TSV and should follow the same general format described [here](https://en.wikipedia.org/wiki/General_feature_format#:~:text=In%20bioinformatics%2C%20the%20general%20feature,DNA%2C%20RNA%20and%20protein%20sequences.)
+ProActive optionally accepts a .gff file as input. The .gff file must be 
+associated with the same metagenome or genome used to create your pileup file. 
+The .gff file should be a TSV and should follow the same general format described [here](https://en.wikipedia.org/wiki/General_feature_format#:~:text=In%20bioinformatics%2C%20the%20general%20feature,DNA%2C%20RNA%20and%20protein%20sequences.).
 
-**The input .gff file must have the following format:**
+**The input .gff file must have the following format exactly:**
 ```{r echo=FALSE}
-data(sampleMetagenomegffTSV)
 kable(head(sampleMetagenomegffTSV), row.names = FALSE) %>%
-    kable_styling(latex_options = "HOLD_position")
+  kable_styling(latex_options = "HOLD_position")
 ```
 
+(Hint- if you are using a gff file output by [PROKKA](https://github.com/tseemann/prokka),
+you may need to remove some unnecessary (for ProActive) lines of text at the top 
+of the file. You may be able to do this with the following command in bash:
+```{bash eval=FALSE}
+grep ^COMMONID metagenomeAnnots.gff > metagenomeAnnotsForProActive.gff
+```
+
+The 'COMMONID' should be a value that your contig or genome accession starts with 
+that is the same accross all the rows. For example, the contig accessions in the
+sampleMetagenomegffTSV all start with "NODE" so I use that as my 'COMMONID' in the
+above command.
 
 # ProActive()
-`ProActive()` is the main function in the ProActive R package. This function filters 
-contigs/chunks based on length and read coverage, performs pattern-matching to detect gaps and elevations in read coverage, identifies start and stop positions and sizes of pattern-matches, and determines pattern-match quality.    
-
-**We recommend using IGV to further inspect read coverage patterns of interest. Viewing read mapping at a single nucleotide level can provide essential information regarding the nature of the elevation or gap in read coverage (i.e. sequencing artifact or real biology).**
+`ProActive()` is the main function in the ProActive R package. This function 
+filters contigs/chunks based on length and read coverage, performs pattern-matching 
+to detect gaps and elevations in read coverage, identifies start and stop positions 
+and sizes of pattern-matches, and determines pattern-match quality.    
 
 ## Function components
 
 ### Chunking
-`ProActive()` can currently detect only one read coverage pattern per contig. While in many cases, contigs only have one read coverage pattern, the longer the contig is, the greater the chance that it has multiple read coverage patterns. Until ProActive is able to detect multiple read coverage patterns per contig, we rely on 'chunking' the contig into smaller subsets so that pattern-matching can be performed on each chunk as if it were an individual contig. 
+Currently, `ProActive()` can only detect one read coverage pattern per contig. 
+While in many cases, contigs only have one read coverage pattern, the longer the 
+contig is, the greater the chance that it has multiple read coverage patterns. 
+Until ProActive is able to detect multiple read coverage patterns per contig, we 
+rely on 'chunking' the contig into smaller subsets (defined by `chunkSize`) so 
+that pattern-matching can be performed on each chunk as if it were an individual 
+contig. The chunking mechanism is what allows `ProActive()` to pattern-match on 
+genomes. When contigs/genomes are chunked, they are assigned a sequential value 
+to link chunks back together (i.e. "NODE_1_chunk_1, NODE_1_chunk_2, NODE_1_chunk_3, ...).
+Note that the remaining 'chunk' of a contig/genome may not be long enough to 
+perform pattern-matching on. Chunks too small for pattern-matching will get put 
+in the output filteredOut table. 
 
 ### Filtering
 Contigs that are too short or have little to no read coverage are filtered out 
@@ -145,10 +195,17 @@ the `minContigLength` parameter which can be set to a minimum of 25,000 bp.
 
 ### Changing pileup windowSize
 The input pileup files have 100 bp windows in which the mapped read coverage is 
-averaged over. This small window size may be helpful to detect very small regions of elevated or gapped read coverage (bp), however in many cases, read coverage patterns don't require the resolution that 100 bp windows provide. While users can use the 100 bp `windowSize` for `ProActive()`, the processing time will be increased **significantly** and noisy data may 
-interfere with pattern-matching. We find that the default 1,000 bp `windowSize` 
-provides a nice balance between processing time and read coverage pattern 
-resolution.  
+averaged over. `ProActive()` increases the window size prior to pattern-matching by 
+averaging the read coverages over a value specified with `windowSize`. In 
+many cases, read coverage patterns don't require the resolution that 100 bp windows 
+provide, however, starting with a 100 bp windowSize means the higher resolutions is 
+there if you want it. While users can use the 100 bp `windowSize` for `ProActive()`, 
+the processing time will be increased **significantly** and noisy data may interfere 
+with pattern-matching. We find that the default 1,000 bp `windowSize` provides a 
+nice balance between processing time and read coverage pattern resolution. If you'd 
+like more resolution than the 1,000 bp `windowSize` provides, consider dropping it to 500.
+If you'd like fine scale read coverage resolution, consider viewing the contigs/genome with
+[IGV](https://igv.org/)
 
 ### Pattern-matching
 `ProActive()` detects read coverage patterns using 
@@ -170,70 +227,82 @@ pattern-matching.
 
 ##### Elevation:
 
-The 'elevation' class is defined by a 'block' pattern which represents an elevated block of read coverage formed when the reads of mobilized genetic elements map back to their respective integration sites in the host bacterium's chromosome. During pattern-matching, both the heights (maxs), bases (mins) and widths of block patterns are altered and all pattern variations are translated across the contig. The block pattern widths never get smaller than 10,000 bp by default, however this can be changed with the `minBlockSize` parameter. 
+The 'elevation' class is defined by a 'block' pattern which represents an elevated 
+block of read coverage formed when the reads of mobilized genetic elements map back 
+to their respective integration sites in the host bacterium's chromosome. During 
+pattern-matching, the height (max), base (min) and width are altered and all 
+pattern variations are translated across the contig. The block 
+pattern width never get smaller than 10,000 bp by default, however this can be 
+changed with the `minSize` parameter. 
 
-```{r echo=FALSE, fig.width=4,fig.height=2}
+```{r echo=FALSE, out.width = "50%"}
 dataframe <- cbind.data.frame(c(1:100), c(rep(0, 20), rep(100, 60), rep(0, 20)))
 colnames(dataframe) <- c("mockpos", "mockcov")
 plot1 <- ggplot(dataframe, aes(x = mockpos, y = mockcov)) +
-    geom_line(linewidth = 1) +
-    labs(x = NULL, y = NULL, title = "Pattern 1") +
-    theme_classic() +
-    ggplot2::theme(
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        plot.title = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
-    )
+  geom_line(linewidth = 1) +
+  labs(x = NULL, y = NULL) +
+  theme_classic() +
+  ggplot2::theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(size = 10),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
+  )
 
 plot1
 ```
 
 
 ##### Gap:
+The 'gap' class is essentially the reverse of the 'elevation' pattern. It is defined 
+by a gapped block pattern which represents a depression in read coverage caused by 
+genetic heterogeneity at a specific region leading to poor read mapping. The same 
+pattern-matching steps (alteration of pattern and pattern translation) used for the
+elevation pattern are used for the gap pattern.
 
-
-
-```{r echo=FALSE, fig.width=4,fig.height=2}
+```{r echo=FALSE, out.width = "50%"}
 dataframe <- cbind.data.frame(c(1:100), c(rep(100, 20), rep(5, 60), rep(100, 20)))
 colnames(dataframe) <- c("mockpos", "mockcov")
 plot1 <- ggplot(dataframe, aes(x = mockpos, y = mockcov)) +
-    geom_line(linewidth = 1) +
-    labs(x = NULL, y = NULL, title = "Pattern 1") +
-    theme_classic() +
-    ggplot2::theme(
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        plot.title = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
-    )
+  geom_line(linewidth = 1) +
+  labs(x = NULL, y = NULL) +
+  theme_classic() +
+  ggplot2::theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(size = 10),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
+  )
 
 plot1
 ```
 
 ##### Elevations/Gaps:
+Elevations and gaps that trail off one side of a contig/chunk are hard to classify
+as the read coverage could be seen as a gap or elevation depending on how you're 
+looking at it. Our solution to this problem was to classify the contig/chunk as 
+'gap' if the elevated region was less than 50% of the length of the contig/chunk and
+otherwise the classification is 'elevated'.
 
-
-
-```{r echo=FALSE, fig.width=4,fig.height=2}
+```{r echo=FALSE, out.width = "50%"}
 dataframe <- cbind.data.frame(c(1:100), c(rep(100, 50), rep(5, 50)))
 colnames(dataframe) <- c("mockpos", "mockcov")
 plot1 <- ggplot(dataframe, aes(x = mockpos, y = mockcov)) +
-    geom_line(linewidth = 1) +
-    labs(x = NULL, y = NULL, title = "Pattern 1") +
-    theme_classic() +
-    ggplot2::theme(
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        plot.title = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
-    )
+  geom_line(linewidth = 1) +
+  labs(x = NULL, y = NULL) +
+  theme_classic() +
+  ggplot2::theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(size = 10),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
+  )
 
 plot1
 ```
@@ -247,104 +316,136 @@ patterns. We made two NoPattern patterns which consist of a horizontal line the
 same length as the contig being assessed at either the average or median read 
 coverage for a contig. This pattern is not re-scaled or translated in any way. 
 
-```{r echo=FALSE, fig.width=4,fig.height=2}
+```{r echo=FALSE, out.width = "50%"}
 dataframe <- cbind.data.frame(c(1:100), rep(10, 100))
 colnames(dataframe) <- c("mockpos", "mockcov")
 plot1 <- ggplot(dataframe, aes(x = mockpos, y = mockcov)) +
-    geom_line(linewidth = 1) +
-    ylim(0, 100) +
-    labs(x = NULL, y = NULL, title = "Pattern 1") +
-    theme_classic() +
-    ggplot2::theme(
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        plot.title = element_text(size = 10),
-        panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
-    )
+  geom_line(linewidth = 1) +
+  ylim(0, 100) +
+  labs(x = NULL, y = NULL) +
+  theme_classic() +
+  ggplot2::theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(size = 10),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 2)
+  )
 plot1
 ```
 
 ### Determining quality of pattern-matches
+A pattern-match quality value is assigned to all contigs/chunks classified as gap
+and elevated. The quality is either 'VeryHigh', 'High', or 'Low'. Pattern-matches
+receive a very high quality rating when all the lowest or highest coverage values on 
+the contig/chunk fall with the gapped or elevated region, respectively, of the 
+pattern-match. Pattern-matches receive a high quality rating when the contig/chunk's 
+maximum or minimum read coverage value falls within the elevated or gapped region, 
+respectively, of the pattern-match. Pattern-matches receive a low quality rating 
+when the contig/chunk's maximum or minimum read coverage value does not fall within 
+the elevated or gapped region, respectively, of the pattern-match.
 
-
-
-### Detecting ORFs in elevated/gapped regions
-
-
+### Extracting gene annotations in elevated/gapped regions
+If a .gff file is provided, then `ProActive()` will extract the open reading frames
+found within the gapped and elevated pattern-match regions and provide them to the user in 
+an output table (ORFtable). An additional column will be added with the classifications 
+information (gap or elevation) associated with the ORFs. If the input .gff file 
+contains a gene 'product' field in the attributes column (9th column in dataframe), then 
+`ProActive()` will extract the product information into a separate column for easy 
+visualization and filtering of annotations of interest. 
 
 ## Usage
 
 Default arguments:
 ```{r}
-ProActiveOutput <- ProActive(pileup=sampleMetagenomePileup, 
-                             mode="metagenome", 
-                             gffTSV=sampleMetagenomegffTSV)
+ProActiveOutput <- ProActive(
+  pileup = sampleMetagenomePileup,
+  mode = "metagenome",
+  gffTSV = sampleMetagenomegffTSV
+)
 ```
 **Note that ProActive *can* be run without the gffTSV file!** 
 
 ## Arguments/parameters
 ```{r, eval=FALSE}
-ProActive(pileup, 
-          mode, 
-          gffTSV, 
-          windowSize = 1000, 
-          minSize=10000, 
-          maxSize=Inf, 
-          minContigLength=30000, 
-          chunkSize=50000,
-          chunkContigs=FALSE,
-          IncludeNoPatterns=FALSE, 
-          saveFilesTo)
+ProActive(pileup,
+  mode,
+  gffTSV,
+  windowSize = 1000,
+  minSize = 10000,
+  maxSize = Inf,
+  minContigLength = 30000,
+  chunkSize = 50000,
+  chunkContigs = FALSE,
+  IncludeNoPatterns = FALSE,
+  saveFilesTo
+)
 ```
 
-- `pileup`: A .txt file containing mapped sequencing read coverages averaged over 100 bp windows/bins.
-- `mode`: Either "genome" or "metagenome" 
-- `gffTSV`: Optional, a .gff file (TSV) containing ORFs associated with the fasta file used to generate the pileup. 
-- `windowSize`: The number of basepairs to average read coverage values over. 
+- **`pileup`**: A .txt file containing mapped sequencing read coverages averaged over 
+100 bp windows/bins.
+- **`mode`**: Either "genome" or "metagenome" 
+- **`gffTSV`**: Optional, a .gff file (TSV) containing ORFs associated with the .fasta 
+file used to generate the pileup. 
+- **`windowSize`**: The number of basepairs to average read coverage values over. 
 Options are 100, 200, 500, 1000 ONLY.  Default is 1000.
-- `minSize`: The minimum size (in bp) of elevation or gap patterns. Default is 10000.
-- `maxSize`: The maximum size (in bp) of elevation or gap patterns. Default is NA (i.e. no maximum).
-- `minContigLength`: The minimum contig/chunk size (in bp) to perform pattern-matching on. Default is 25000.
-- `chunkSize`: If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE, chunk the genome or contigs, respectively, into smaller subsets for pattern-matching. `chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.
-- `chunkContigs`: TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching will be performed on each subset. Default is FALSE.
-- `IncludeNoPatterns`: TRUE or FALSE, If TRUE the noPattern pattern-matches will be included in the ProActive PatternMatches output list. If you would like to visualize the noPattern pattern-matches in `plotProActiveResults()`, this should be set to TRUE. 
-- `saveFilesTo`: Optional, Provide a path to the directory you wish to save 
+- **`minSize`**: The minimum size (in bp) of elevation or gap patterns. Default is 10000.
+- **`maxSize`**: The maximum size (in bp) of elevation or gap patterns. Default is NA
+(i.e. no maximum).
+- **`minContigLength`**: The minimum contig/chunk size (in bp) to perform pattern-matching 
+on. Default is 25000.
+- **`chunkSize`**: If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE, 
+chunk the genome or contigs, respectively, into smaller subsets for pattern-matching. 
+`chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.
+- **`chunkContigs`**: TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer 
+than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching 
+will be performed on each subset. Default is FALSE.
+- **`IncludeNoPatterns`**: TRUE or FALSE, If TRUE the noPattern pattern-matches will 
+be included in the ProActive PatternMatches output list. If you would like to visualize 
+the noPattern pattern-matches in `plotProActiveResults()`, this should be set to TRUE. 
+- **`saveFilesTo`**: Optional, Provide a path to the directory you wish to save 
 output to. A folder will be made within the provided directory to store 
 results.
 
 
 ## Output
 
-The output of `ProActive` is a list containing 4 objects:
+The output of `ProActive` is a list containing 6 objects:
 
-1. ORFTable:
-2. SummaryTable:
-3. PatternMatches:
-4. FilteredOut:
-5. Arguments:
+1. SummaryTable: A table containing all pattern-matching classifications
+2. CleanSummaryTable: A table containing only gap and elevation pattern-match
+classifications (i.e. noPattern classifications removed)
+3. PatternMatches: A list object containing information needed to visualize the 
+pattern-matches in `plotProActiveResults()`
+4. FilteredOut: A table containing contigs/chunks that were filtered out for being 
+too small or having too low read coverage
+5. Arguments: A list object containing arguments used for pattern-matching (windowSize, 
+mode, chunkSize, chunkContigs)
+6. ORFtable: A table containing ORFs associated with elevated or gapped regions in 
+pattern-matches
 
-Save the desired list-item to a new variable using its associated name.
+Save the desired list item to a new variable using its associated name.
 
-ORF Table:
+Subset of ORFtable:
 ```{r}
-ProActiveORFTable <- ProActiveOutput$ORFTable
+ProActiveORFtable <- ProActiveOutput$ORFtable
 ```
 
 ```{r, echo=FALSE}
-kable(head(ProActiveORFTable)) %>%
-    kable_styling(latex_options = "HOLD_position")
+kable(head(ProActiveORFtable)) %>%
+  kable_styling(latex_options = "HOLD_position")
 ```
 
-Summary table:
+
+Clean summary table:
 ```{r}
-ProActiveSummaryTable <- ProActiveOutput$SummaryTable
+ProActiveCleanSummaryTable <- ProActiveOutput$CleanSummaryTable
 ```
 
 ```{r, echo=FALSE}
-kable(ProActiveSummaryTable) %>%
-    kable_styling(latex_options = "HOLD_position")
+kable(ProActiveCleanSummaryTable) %>%
+  kable_styling(latex_options = "HOLD_position")
 ```
 
 
@@ -362,7 +463,7 @@ pattern-match for visualization, `plotProActiveResults()` uses the
 pattern-match's minimum and maximum values and the start and stop positions.
 
 ### Plotting read coverage and associated pattern-matches
-The read coverage is plotted for each contig or genome/contig chunk
+The read coverage is plotted for each contig/chunk
 classified as having a gap or elevation in read coverage. The pattern-match 
 associated with the classification is overlaid on the read coverage.
 
@@ -370,24 +471,31 @@ associated with the classification is overlaid on the read coverage.
 
 Default arguments:
 ```{r}
-ProActivePlots <- plotProActiveResults(pileup=sampleMetagenomePileup, 
-                                       ProActiveResults=ProActiveOutput)
+ProActivePlots <- plotProActiveResults(
+  pileup = sampleMetagenomePileup,
+  ProActiveResults = ProActiveOutput
+)
 ```
 
 ## Arguments/parameters
 ```{r, eval=FALSE}
-plotProActiveResults(pileup, 
-                     ProActiveResults, 
-                     qualityFilter=NA, 
-                     elevFilter=NA, 
-                     saveFilesTo) {
+plotProActiveResults(pileup,
+  ProActiveResults,
+  qualityFilter = NA,
+  elevFilter = NA,
+  saveFilesTo
+)
 ```
 
-- `pileup`: A .txt file containing mapped sequencing read coverages averaged over 100 bp windows/bins.
-- `ProActiveResults`: The output from `ProActive()`.
-- `qualityFilter`: Optional, only plot results with pattern-matches that achieved a specified quality level. Options are "high", "okay", and "poor". Default is NA (i.e. no filter).
-- `elevFilter`: Optional, only plot results with pattern-matches that achieved an elevation ratio (max/min) greater than the specified values. Defualt is NA (i.e. no filter).
-- `saveFilesTo`: Optional, Provide a path to the directory you wish to save 
+- **`pileup`**: A .txt file containing mapped sequencing read coverages averaged over 
+100 bp windows/bins.
+- **`ProActiveResults`**: The output from `ProActive()`.
+- **`qualityFilter`**: Optional, only plot results with pattern-matches that achieved 
+a specified quality level. Options are "high", "okay", and "poor". Default is NA 
+(i.e. no filter).
+- **`elevFilter`**: Optional, only plot results with pattern-matches that achieved an 
+elevation ratio (max/min) greater than the specified values. Defualt is NA (i.e. no filter).
+- **`saveFilesTo`**: Optional, Provide a path to the directory you wish to save 
 output to. A folder will be made within the provided directory to store 
 results.
 
@@ -396,10 +504,18 @@ results.
 The output of `plotProActiveResults` is a list of ggplot objects. 
 
 View all plots:
-```{r}
+```{r eval=FALSE}
 ProActivePlots
 ```
 
+```{r echo=FALSE, fig.width=6}
+ProActivePlots$NODE_1911
+ProActivePlots$NODE_1583
+ProActivePlots$NODE_1884
+ProActivePlots$NODE_1255
+ProActivePlots$NODE_368
+ProActivePlots$NODE_617
+```
 
 # Session Information
 ```{r}

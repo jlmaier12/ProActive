@@ -2,18 +2,28 @@
 % Please edit documentation in R/ORFsInElevGaps.R
 \name{ORFsInElevGaps}
 \alias{ORFsInElevGaps}
-\title{shape-match size calculator}
+\title{Detect ORFs in elevations and gaps}
 \usage{
-ORFsInElevGaps(elevGapSummList, windowSize, ORFTable)
+ORFsInElevGaps(elevGapSummList, windowSize, gffTSV, mode, chunkContigs)
 }
 \arguments{
-\item{elevGapSummList}{A list containing shape information associated with all contigs containing a potential active prophages. Generated with the allprophages_func}
+\item{elevGapSummList}{A list containing pattern-match information associated with all
+elevation and gap classifications. (i.e. no NoPattern classifications)}
 
-\item{windowSize}{The window size used to re-average read coverage datasets}
+\item{windowSize}{The number of basepairs to average read coverage values over.
+Options are 100, 200, 500, 1000 ONLY. Default is 1000.}
 
-\item{ORFTable}{A gff file of ORFs}
+\item{gffTSV}{Optional, a .gff file (TSV) containing ORFs associated with the .fasta
+file used to generate the pileup.}
+
+\item{mode}{Either "genome" or "metagenome"}
+
+\item{chunkContigs}{TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+will be performed on each subset. Default is FALSE.}
 }
 \description{
-Calculate the size, in base pairs, of the matching region for shapes detected in whole-community read coverages
+Extracts subsets of the gffTSV associated with ORFs that fall within regions
+of detected gapped or elevated read coverage.
 }
 \keyword{internal}

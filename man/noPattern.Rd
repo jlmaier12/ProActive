@@ -2,14 +2,17 @@
 % Please edit documentation in R/noPattern.R
 \name{noPattern}
 \alias{noPattern}
-\title{No transduction pattern-matcher for whole-community read coverage}
+\title{No read coverage pattern}
 \usage{
 noPattern(pileupSubset)
 }
 \arguments{
-\item{pileupSubset}{A subset of the read coverage dataset that pertains only to the contig currently being assessed}
+\item{pileupSubset}{A subset of the read coverage dataset that pertains only to
+the contig currently being assessed}
 }
 \description{
-Assess whether a contig does not have a read coverage pattern associated with a transduction event. A horizontal line at the mean coverage should be an optimal match if the contig read coverage displays no transduction patterns
+Assess whether a contig/chunk does not have an elevated/gapped read coverage pattern.
+A horizontal line at the mean or median coverage should be the best
+match if the contig/chunk read coverage is not gapped or elevated.
 }
 \keyword{internal}
