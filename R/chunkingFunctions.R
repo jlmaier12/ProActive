@@ -48,6 +48,8 @@ contigChunks <- function(pileup, chunkSize) {
     }
   })
   refName <- NULL
+  pileupSubset <- NULL
+  chunkSizeDiv <- NULL
   return(chunkedPileup)
 }
 
