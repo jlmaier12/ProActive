@@ -32,4 +32,4 @@ running PROKKA with default parameters on the *Salmonella enterica* LT2 genome
 sequence  (NCBI RefSeq NC_003197.2) associated with the sampleGenomePileup in
 the ProActive package.
 }
-\keyword{datasets}
+\keyword{internal}

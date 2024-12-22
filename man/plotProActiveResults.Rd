@@ -4,23 +4,13 @@
 \alias{plotProActiveResults}
 \title{Plot results of `ProActive()` pattern-matching}
 \usage{
-plotProActiveResults(
-  pileup,
-  ProActiveResults,
-  qualityFilter = NA,
-  elevFilter = NA,
-  saveFilesTo
-)
+plotProActiveResults(pileup, ProActiveResults, elevFilter = NA, saveFilesTo)
 }
 \arguments{
 \item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
 100 bp windows/bins.}
 
 \item{ProActiveResults}{The output from `ProActive()`.}
-
-\item{qualityFilter}{Optional, only plot results with pattern-matches that achieved
-a specified quality level. Options are "high", "okay", and "poor". Default is NA
-(i.e. no filter).}
 
 \item{elevFilter}{Optional, only plot results with pattern-matches that achieved an
 elevation ratio (max/min) greater than the specified values. Defualt is NA (i.e. no filter).}

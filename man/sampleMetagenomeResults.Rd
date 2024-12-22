@@ -17,7 +17,7 @@ pattern-matches in `plotProActiveResults()`}
 too small or having too low read coverage}
   \item{Arguments}{A list object containing arguments used for pattern-matching (windowSize,
 mode, chunkSize, chunkContigs)}
-  \item{ORFtable}{A list object containing arguments used for pattern-matching (windowSize,
+  \item{GenePredictsTable}{A list object containing arguments used for pattern-matching (windowSize,
 mode, chunkSize, chunkContigs)}
 }
 }
@@ -32,4 +32,4 @@ Report...
 Output from running `ProActive()` with sampleMetagenomePileup and
 sampleMetagenomegffTSV in metagenome mode with defualts.
 }
-\keyword{datasets}
+\keyword{internal}

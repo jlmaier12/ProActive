@@ -4,6 +4,7 @@
 #' pileup file generated during read mapping.
 #' Report...
 #'
+#' @keywords internal
 #' @format ## `sampleMetagenomePileup`
 #' A data frame with 4,604 rows and 4 columns:
 #' \describe{

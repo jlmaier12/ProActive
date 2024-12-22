@@ -18,8 +18,13 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`ProActive` detects elevations and gaps in sequencing read coverage using a
-pattern-matching algorithm. ProActive is best used as a screening method to 
+The `ProActive` R package automatically detects regions of gapped and elevated 
+read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize 
+and visualize read coverage patterns in both genomes and metagenomes. Optionally, 
+users may provide gene predictions associated with their genome or metagenome 
+in the form of a .gff file. In this case, `ProActive` will generate an additional 
+output table containing the gene predictions found within the detected regions of gapped 
+and elevated read coverage. `ProActive` is best used as a screening method to 
 identify genetic regions for further investigation.
 
 Elevations or gaps in read coverage can be caused by differential 

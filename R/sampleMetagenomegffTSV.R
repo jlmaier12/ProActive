@@ -3,6 +3,7 @@
 #' A subset of gene annotations associated with the metagenome in the sampleMetagenomePileup
 #' Report...
 #'
+#' @keywords internal
 #' @format ## `sampleMetagenomegffTSV`
 #' A data frame with 467 rows and 9 columns:
 #' \describe{

@@ -32,4 +32,4 @@ were mapped to the LT2 reference genome (NCBI RefSeq NC_003197.2). The
 bbmap.sh bincov parameter with covbinsize=100 was used to create a pileup file
 with 100 bp windows.
 }
-\keyword{datasets}
+\keyword{internal}

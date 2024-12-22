@@ -3,6 +3,7 @@
 #' Sample output from running `ProActive()` in metagenome mode
 #' Report...
 #'
+#' @keywords internal
 #' @format ## `sampleMetagenomeResults`
 #' A list with 6 items:
 #' \describe{
@@ -15,7 +16,7 @@
 #' too small or having too low read coverage}
 #'   \item{Arguments}{A list object containing arguments used for pattern-matching (windowSize,
 #' mode, chunkSize, chunkContigs)}
-#'   \item{ORFtable}{A list object containing arguments used for pattern-matching (windowSize,
+#'   \item{GenePredictsTable}{A list object containing arguments used for pattern-matching (windowSize,
 #' mode, chunkSize, chunkContigs)}
 #' }
 #' @details Output from running `ProActive()` with sampleMetagenomePileup and

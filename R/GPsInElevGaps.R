@@ -1,13 +1,13 @@
-#' Detect ORFs in elevations and gaps
+#' Detect gene predictions in elevations and gaps
 #'
-#' Extracts subsets of the gffTSV associated with ORFs that fall within regions
+#' Extracts subsets of the gffTSV associated with gene predictions that fall within regions
 #' of detected gapped or elevated read coverage.
 #'
 #' @param elevGapSummList A list containing pattern-match information associated with all
 #' elevation and gap classifications. (i.e. no NoPattern classifications)
 #' @param windowSize The number of basepairs to average read coverage values over.
 #' Options are 100, 200, 500, 1000 ONLY. Default is 1000.
-#' @param gffTSV Optional, a .gff file (TSV) containing ORFs associated with the .fasta
+#' @param gffTSV Optional, a .gff file (TSV) containing gene predictions associated with the .fasta
 #' file used to generate the pileup.
 #' @param mode Either "genome" or "metagenome"
 #' @param chunkContigs TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
@@ -16,8 +16,8 @@
 #' @importFrom stringr str_detect str_extract_all regex
 #' @importFrom dplyr bind_rows
 #' @keywords internal
-ORFsInElevGaps <- function(elevGapSummList, windowSize, gffTSV, mode, chunkContigs) {
-  ORFlist <- list()
+GPsInElevGaps <- function(elevGapSummList, windowSize, gffTSV, mode, chunkContigs) {
+  GPlist <- list()
   colnames(gffTSV) <- c("seqid", "source", "type", "start", "end", "score", "strand", "phase", "attributes")
   if (TRUE %in% (str_detect(gffTSV[,9], regex('product', ignore_case = T)))){
     product <- str_extract_all(gffTSV [,9], regex("(?<=product=)[\\s\\S]*",ignore_case = T))
@@ -35,14 +35,14 @@ ORFsInElevGaps <- function(elevGapSummList, windowSize, gffTSV, mode, chunkConti
     startPos <- elevGapSummList[[i]][[4]] * windowSize
     endPos <- elevGapSummList[[i]][[5]] * windowSize
     matchRegion <- seq(startPos, endPos, 1)
-    ORFs <- gffTSV[which(gffTSV[, 5] %in% matchRegion), ]
-    ORFs$seqid <- rep(trueRefName, nrow(ORFs))
-    if (nrow(ORFs) == 0) {
+    GPs <- gffTSV[which(gffTSV[, 5] %in% matchRegion), ]
+    GPs$seqid <- rep(trueRefName, nrow(GPs))
+    if (nrow(GPs) == 0) {
       return(NULL)
     }
-    ORFs$Classification <- elevGapSummList[[i]][[7]]
-    ORFlist[[i]] <<- ORFs
+    GPs$Classification <- elevGapSummList[[i]][[7]]
+    GPlist[[i]] <<- GPs
   })
-  ORFSummTable <- bind_rows(ORFlist)
-  return(ORFSummTable)
+  GPsummTable <- bind_rows(GPlist)
+  return(as.data.frame(GPsummTable))
 }

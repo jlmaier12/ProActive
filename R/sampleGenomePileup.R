@@ -3,6 +3,7 @@
 #' A pileup file generated during read mapping to the *Salmonella enterica* LT2 genome.
 #' Report...
 #'
+#' @keywords internal
 #' @format ## `sampleGenomePileup`
 #' A data frame with 48,575 rows and 4 columns:
 #' \describe{

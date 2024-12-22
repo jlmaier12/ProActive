@@ -1,4 +1,9 @@
-url: ~
+url: https://jlmaier12.github.io/ProActive/
 template:
   bootstrap: 5
 
+reference:
+- title: All Functions
+- contents:
+  - ProActive
+  - plotProActiveResults

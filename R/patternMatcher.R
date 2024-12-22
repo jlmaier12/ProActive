@@ -72,8 +72,7 @@ patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContig
     bestMatchList[[A]] <<- c(bestMatch, refName)
     A <<- A + 1
   })
-  classifQualities <- classifQuality(bestMatchList, pileup, windowSize, mode)
   filteredOutContigsdf <- na.omit(cbind.data.frame(filteredOutContigs, reason))
-  patternMatchingSumm <- list(classifQualities, filteredOutContigsdf)
+  patternMatchingSumm <- list(bestMatchList, filteredOutContigsdf)
   return(patternMatchingSumm)
 }

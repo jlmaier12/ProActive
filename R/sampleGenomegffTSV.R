@@ -3,6 +3,7 @@
 #' Gene annotations associated with the genome in the sampleGenomePileup
 #' Report...
 #'
+#' @keywords internal
 #' @format ## `sampleGenomegffTSV`
 #' A data frame with 85,575 rows and 9 columns:
 #' \describe{

@@ -36,4 +36,4 @@ associated with the sampleMetagenomePileup in the ProActive package.
 The gff was subset to only include the data associated with the
 contigs in the sample data subset.
 }
-\keyword{datasets}
+\keyword{internal}

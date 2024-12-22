@@ -23,6 +23,7 @@ The two main functions in ProActive are:
 Useful links:
 \itemize{
   \item \url{https://github.com/jlmaier12/ProActive}
+  \item \url{https://jlmaier12.github.io/ProActive/}
   \item Report bugs at \url{https://github.com/jlmaier12/ProActive/issues}
 }
 

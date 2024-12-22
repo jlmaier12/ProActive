@@ -24,7 +24,7 @@ ProActive(
 
 \item{mode}{Either "genome" or "metagenome"}
 
-\item{gffTSV}{Optional, a .gff file (TSV) containing ORFs associated with the .fasta
+\item{gffTSV}{Optional, a .gff file (TSV) containing gene predictions associated with the .fasta
 file used to generate the pileup.}
 
 \item{windowSize}{The number of basepairs to average read coverage values over.
@@ -70,17 +70,18 @@ gffTSV files, then the last list is a table consisting of ORFs found within
 the detected gaps and elevations in read coverage.
 }
 \examples{
-## Metagenome mode
+## Metagenome mode with gffTSV
 metagenome_results <- ProActive(
   pileup = sampleMetagenomePileup,
   mode = "metagenome",
   gffTSV = sampleMetagenomegffTSV
 )
 
-## Genome mode
+## Genome mode without gffTSV
 genome_results <- ProActive(
-  pileup = sampleGenomePileup,
-  mode = "genome",
-  gffTSV = sampleGenomegffTSV
+  pileup = exampleGenomePileupSubset,
+  mode = "genome"
 )
+
+##gffTSV is optional!
 }

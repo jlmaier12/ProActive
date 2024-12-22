@@ -21,9 +21,9 @@ contigChunks <- function(pileup, chunkSize) {
     if (pileupSubset[nrow(pileupSubset), 3] > chunkSize) {
       refNameChunk <<- rep(NA, nrow(pileupSubset))
       chunkSizeDiv <<- chunkSize / 100
-      X <- 1
-      Y <- chunkSizeDiv
-      Z <- 1
+      X <<- 1
+      Y <<- chunkSizeDiv
+      Z <<- 1
       repeat {
         refNameChunk[c(X:Y)] <<- rep(paste0(refName, "_chunk_", Z), chunkSizeDiv)
         if (Z == max(pileupSubset$position) %/% (chunkSize)) {
@@ -47,6 +47,9 @@ contigChunks <- function(pileup, chunkSize) {
       chunkedPileup[c(NAIdx:(NAIdx + nrow(pileupSubset) - 1)), ] <<- pileupSubset
     }
   })
+  X <- NULL
+  Y <- NULL
+  Z <- NULL
   refName <- NULL
   pileupSubset <- NULL
   chunkSizeDiv <- NULL

@@ -20,4 +20,4 @@ Output from running `plotProActiveResults()` on the sampleMetagenomePileup
 and the output of `ProActive()` run with the sampleMetagenomePileup. Default
 parameters used.
 }
-\keyword{datasets}
+\keyword{internal}

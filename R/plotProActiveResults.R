@@ -5,9 +5,6 @@
 #'
 #' @param pileup  A .txt file containing mapped sequencing read coverages averaged over
 #' 100 bp windows/bins.
-#' @param qualityFilter Optional, only plot results with pattern-matches that achieved
-#' a specified quality level. Options are "high", "okay", and "poor". Default is NA
-#' (i.e. no filter).
 #' @param ProActiveResults The output from `ProActive()`.
 #' @param elevFilter Optional, only plot results with pattern-matches that achieved an
 #' elevation ratio (max/min) greater than the specified values. Defualt is NA (i.e. no filter).
@@ -20,7 +17,7 @@
 #' @examples
 #' ProActivePlots <- plotProActiveResults(sampleMetagenomePileup,
 #'                                        sampleMetagenomeResults)
-plotProActiveResults <- function(pileup, ProActiveResults, qualityFilter = NA, elevFilter = NA, saveFilesTo) {
+plotProActiveResults <- function(pileup, ProActiveResults, elevFilter = NA, saveFilesTo) {
   position <- coverage <- NULL
   windowSize <- ProActiveResults[[5]][[1]]
   mode <- ProActiveResults[[5]][[2]]
@@ -42,13 +39,7 @@ plotProActiveResults <- function(pileup, ProActiveResults, qualityFilter = NA, e
     refName <- patternMatches[[i]][[8]]
     matchInfo <- summaryTable[which(summaryTable[, 1] == refName), ]
     classification <- matchInfo[, 2]
-    quality <- matchInfo[, 3]
     elevRatio <- ifelse(classification == "NoPattern", "NA", round(matchInfo[, 4], digits = 3))
-    if (is.na(qualityFilter) == FALSE) {
-      if (quality != qualityFilter) {
-        return(NULL)
-      }
-    }
     if (is.na(elevFilter) == FALSE) {
       if (elevRatio < elevFilter) {
         return(NULL)
@@ -58,7 +49,7 @@ plotProActiveResults <- function(pileup, ProActiveResults, qualityFilter = NA, e
     pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
     pattern <- patternBuilder(pileupSubset, patternMatches[[i]])
     patternMatch <- cbind(pileupSubset, pattern)
-    matchLength <- matchInfo[, 7]
+    matchLength <- matchInfo[, 6]
     plot <- ggplot(data = patternMatch, aes(x = position, y = coverage)) +
       geom_area(data = patternMatch, aes(x = position, y = coverage), fill = "seagreen3") +
       geom_line(y = pattern, linewidth = 1) +
@@ -86,11 +77,10 @@ plotProActiveResults <- function(pileup, ProActiveResults, qualityFilter = NA, e
   refNames <- na.omit(refNames)
   names(plots) <- refNames
   if (missing(saveFilesTo) == FALSE) {
-    ifelse(!dir.exists(paths = paste0(saveFilesTo, "\\ProActiveOutput")),
-      dir.create(paste0(saveFilesTo, "\\ProActiveOutput")),
+    ifelse(!dir.exists(paths = paste0(saveFilesTo, "\\ProActiveOutputPlots")),
+      dir.create(paste0(saveFilesTo, "\\ProActiveOutputPlots")),
       stop(
-        "'ProActiveOutput' folder exists already in the provided
-                directory"
+        "'ProActiveOutputPlots' already exists in the provided directory"
       )
     )
     lapply(
@@ -99,7 +89,7 @@ plotProActiveResults <- function(pileup, ProActiveResults, qualityFilter = NA, e
         ggsave(
           filename = paste0(
             saveFilesTo,
-            "\\ProActiveOutput\\", X, ".png"
+            "\\ProActiveOutputPlots\\", X, ".png"
           ),
           plot = plots[[X]],
           width = 8,

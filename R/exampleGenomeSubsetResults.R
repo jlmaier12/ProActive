@@ -1,9 +1,10 @@
-#' sampleGenomeResults
+#' exampleGenomeSubsetResults
 #'
 #' Sample output from running `ProActive()` in genome mode
 #' Report...
 #'
-#' @format ## `sampleGenomeResults`
+#' @keywords internal
+#' @format ## `exampleGenomeSubsetResults `
 #' A list with 6 items:
 #' \describe{
 #'   \item{SummaryTable}{A table containing all pattern-matching classifications}
@@ -15,9 +16,9 @@
 #' too small or having too low read coverage}
 #'   \item{Arguments}{A list object containing arguments used for pattern-matching (windowSize,
 #' mode, chunkSize, chunkContigs)}
-#'   \item{ORFtable}{A list object containing arguments used for pattern-matching (windowSize,
+#'   \item{GenePredictsTable}{A list object containing arguments used for pattern-matching (windowSize,
 #' mode, chunkSize, chunkContigs)}
 #' }
-#' @details Output from running `ProActive()` with sampleGenomePileup and
-#' sampleGenomegffTSV in metagenome mode with defualts.
-"sampleGenomeResults"
+#' @details Output from running `ProActive()` with exampleGenomePileupSubset and
+#' exampleGenomegffTSVSubset in genome mode with defaults.
+"exampleGenomeSubsetResults"

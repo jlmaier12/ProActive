@@ -6,6 +6,6 @@ test_that("ProActive works on metagenomes with defualts", {
 
 test_that("ProActive works on genomes with defualts", {
   ##genome
-  ProActiveTestGenome <- ProActive(sampleGenomePileup, mode="metagenome", gffTSV = sampleGenomegffTSV)
-  expect_equal(ProActiveTestGenome, sampleGenomeResults)
+  ProActiveTestGenome <- ProActive(exampleGenomePileupSubset, mode="genome", gffTSV = exampleGenomegffTSVSubset)
+  expect_equal(ProActiveTestGenome, exampleGenomeSubsetResults)
 })

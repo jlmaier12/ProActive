@@ -14,7 +14,7 @@
 #' @param pileup A .txt file containing mapped sequencing read coverages averaged over
 #' 100 bp windows/bins.
 #' @param mode Either "genome" or "metagenome"
-#' @param gffTSV Optional, a .gff file (TSV) containing ORFs associated with the .fasta
+#' @param gffTSV Optional, a .gff file (TSV) containing gene predictions associated with the .fasta
 #' file used to generate the pileup.
 #' @param windowSize The number of basepairs to average read coverage values over.
 #' Options are 100, 200, 500, 1000 ONLY. Default is 1000.
@@ -39,19 +39,20 @@
 #' @return A list containing 6 objects described in the function description.
 #' @export
 #' @examples
-#' ## Metagenome mode
+#' ## Metagenome mode with gffTSV
 #' metagenome_results <- ProActive(
 #'   pileup = sampleMetagenomePileup,
 #'   mode = "metagenome",
 #'   gffTSV = sampleMetagenomegffTSV
 #' )
 #'
-#' ## Genome mode
+#' ## Genome mode without gffTSV
 #' genome_results <- ProActive(
-#'   pileup = sampleGenomePileup,
-#'   mode = "genome",
-#'   gffTSV = sampleGenomegffTSV
+#'   pileup = exampleGenomePileupSubset,
+#'   mode = "genome"
 #' )
+#'
+#' ##gffTSV is optional!
 ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FALSE,
                       minSize = 10000, maxSize = Inf, minContigLength = 30000,
                       chunkSize = 100000, IncludeNoPatterns = FALSE, saveFilesTo) {
@@ -91,9 +92,9 @@ ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FA
   message("Summarizing pattern-matching results")
   summaryTable <- classifSumm(pileup, patternMatchSummary[[1]], windowSize, mode)
   if (missing(gffTSV) == FALSE) {
-    message("Finding ORFs in elevated or gapped regions of read coverage...")
+    message("Finding gene predictions in elevated or gapped regions of read coverage...")
     elevGapSummList <- removeNoPatterns(patternMatchSummary[[1]])
-    ORFSummTable <- ORFsInElevGaps(elevGapSummList, windowSize, gffTSV, mode, chunkContigs)
+    GPSummTable <- GPsInElevGaps(elevGapSummList, windowSize, gffTSV, mode, chunkContigs)
   }
   message("Finalizing output")
   endTime <- Sys.time()
@@ -116,8 +117,8 @@ ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FA
   finalSummaryList <- list(summaryTable, cleanSummaryTable, classifList, filteredOutContigsDf, arguments)
   names(finalSummaryList) <- c("SummaryTable", "CleanSummaryTable", "PatternMatches", "FilteredOut", "Arguments")
   if (missing(gffTSV) == FALSE) {
-    finalSummaryList <- c(finalSummaryList, list(ORFSummTable))
-    names(finalSummaryList)[6] <- "ORFtable"
+    finalSummaryList <- c(finalSummaryList, list(GPSummTable))
+    names(finalSummaryList)[6] <- "GenePredictTable"
   }
   table <- (table(summaryTable[, 2]))
   message(paste0(capture.output(table), collapse = "\n"))
@@ -125,16 +126,16 @@ ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FA
     ifelse(!dir.exists(paths = paste0(saveFilesTo, "\\ProActiveOutput")),
       dir.create(paste0(saveFilesTo, "\\ProActiveOutput")),
       stop(
-        "'ProActiveOutput' folder exists already
-                in the provided directory"
+        "'ProActiveOutput' exists already in the provided directory"
       )
     )
     if (missing(gffTSV) == FALSE) {
+      GPSummTable <- apply(GPSummTable,2,as.character)
       write.table(
-        ORFSummTable,
+        GPSummTable,
         file = paste0(
           saveFilesTo,
-          "\\ProActiveOutput\\ProActiveORFtable.csv"
+          "\\ProActiveOutput\\ProActiveGenePredictstable.csv"
         ),
         sep = ",",
         row.names = FALSE
@@ -162,7 +163,7 @@ ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FA
       filteredOutContigsDf,
       file = paste0(
         saveFilesTo,
-        "\\ProActiveOutput\\ProActiveFilteredOutContigs.csv"
+        "\\ProActiveOutput\\ProActiveFilteredOut.csv"
       ),
       sep = ",",
       row.names = FALSE
