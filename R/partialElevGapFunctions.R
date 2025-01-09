@@ -27,24 +27,24 @@ partialElevGap <- function(pileupSubset, windowSize, minSize, maxSize) {
   patternR <- rev(patternL)
   bestMatchInfoL <- collectBestMatchInfo(patternL, pileupSubset, "Elevation", "Left")
   bestMatchInfoR <- collectBestMatchInfo(patternR, pileupSubset, "Elevation", "Right")
-  lapply(seq_along(maxCoverages), function(maxCov) {
-    bestMatchInfoL <<- partialElevGapShrink(minReadCov, windowSize, maxCoverages[[maxCov]],
+  for (maxCov in seq_along(maxCoverages)) {
+    bestMatchInfoL <- partialElevGapShrink(minReadCov, windowSize, maxCoverages[[maxCov]],
                                             elevLength, nonElev, bestMatchInfoL,
                                             pileupSubset, minSize, "Left")
-    bestMatchInfoR <<- partialElevGapShrink(minReadCov, windowSize, maxCoverages[[maxCov]],
+    bestMatchInfoR <- partialElevGapShrink(minReadCov, windowSize, maxCoverages[[maxCov]],
                                             elevLength, nonElev, bestMatchInfoR,
                                             pileupSubset, minSize, "Right")
-    lapply(seq_along(minCoverages), function(minCov) {
-      bestMatchInfoL <<- partialElevGapShrink(minCoverages[[minCov]], windowSize,
+    for(minCov in seq_along(minCoverages)){
+      bestMatchInfoL <- partialElevGapShrink(minCoverages[[minCov]], windowSize,
                                               maxCoverages[[maxCov]], elevLength,
                                               nonElev, bestMatchInfoL, pileupSubset,
                                               minSize, "Left")
-      bestMatchInfoR <<- partialElevGapShrink(minCoverages[[minCov]], windowSize,
+      bestMatchInfoR <- partialElevGapShrink(minCoverages[[minCov]], windowSize,
                                               maxCoverages[[maxCov]], elevLength,
                                               nonElev, bestMatchInfoR, pileupSubset,
                                               minSize, "Right")
-    })
-  })
+    }
+  }
   bestMatchInfo <- elevOrGapClassif(list(bestMatchInfoL, bestMatchInfoR), pileupSubset)
   return(bestMatchInfo)
 }
@@ -108,8 +108,7 @@ partialElevGapShrink <- function(minCov, windowSize, maxCov, elevLength, nonElev
 #'  currently being assessed.
 #' @keywords internal
 elevOrGapClassif <- function(bestMatchList, pileupSubset) {
-  bestMatchInfoNew <- list()
-  lapply(seq_along(bestMatchList), function(i) {
+  bestMatchInfoNew <- lapply(seq_along(bestMatchList), function(i) {
     bestMatchInfo <- bestMatchList[[i]]
     startPos <- bestMatchInfo[[4]]
     endPos <- bestMatchInfo[[5]]
@@ -133,7 +132,7 @@ elevOrGapClassif <- function(bestMatchList, pileupSubset) {
         bestMatchInfo[[5]] <- startPos
       }
     }
-    bestMatchInfoNew[[i]] <<- bestMatchInfo
+    bestMatchInfo
   })
   return(bestMatchInfoNew)
 }

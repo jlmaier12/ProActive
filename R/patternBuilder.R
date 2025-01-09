@@ -5,15 +5,15 @@
 #'
 #' @param pileupSubset A subset of the pileup that pertains only to the contig/chunk
 #'  currently being assessed.
-#' @param bestMatchList A list containing pattern-match information associated with
-#' all contigs/chunks classified by `ProActive()` pattern-matching
+#' @param bestMatchInfo The information associated with the current best pattern-match
+#' for the contig/chunk being assessed.
 #' @keywords internal
-patternBuilder <- function(pileupSubset, bestMatchList) {
-  minReadCov <- bestMatchList[[2]]
-  maxReadCov <- bestMatchList[[3]]
-  startPos <- bestMatchList[[4]]
-  endPos <- bestMatchList[[5]]
-  classification <- bestMatchList[[7]]
+patternBuilder <- function(pileupSubset, bestMatchInfo) {
+  minReadCov <- bestMatchInfo[[2]]
+  maxReadCov <- bestMatchInfo[[3]]
+  startPos <- bestMatchInfo[[4]]
+  endPos <- bestMatchInfo[[5]]
+  classification <- bestMatchInfo[[7]]
   if (classification == "Gap") {
     if (startPos == 1) {
       pattern <- c(rep(minReadCov, endPos), rep(maxReadCov, (nrow(pileupSubset) - endPos)))
@@ -35,5 +35,6 @@ patternBuilder <- function(pileupSubset, bestMatchList) {
       pattern <- c(rep(minReadCov, startPos), rep(maxReadCov, matchRegion), rep(minReadCov, (nrow(pileupSubset) - (matchRegion + startPos))))
     }
   }
-  return(pattern)
+  patternMatch <- cbind.data.frame(pileupSubset, pattern)
+  return(patternMatch)
 }

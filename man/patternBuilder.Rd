@@ -4,14 +4,14 @@
 \alias{patternBuilder}
 \title{Builds pattern-match vectors}
 \usage{
-patternBuilder(pileupSubset, bestMatchList)
+patternBuilder(pileupSubset, bestMatchInfo)
 }
 \arguments{
 \item{pileupSubset}{A subset of the pileup that pertains only to the contig/chunk
 currently being assessed.}
 
-\item{bestMatchList}{A list containing pattern-match information associated with
-all contigs/chunks classified by `ProActive()` pattern-matching}
+\item{bestMatchInfo}{The information associated with the current best pattern-match
+for the contig/chunk being assessed.}
 }
 \description{
 Builds the pattern-match (vector) associated with each contig/chunk for

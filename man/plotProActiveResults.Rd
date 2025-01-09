@@ -4,7 +4,7 @@
 \alias{plotProActiveResults}
 \title{Plot results of `ProActive()` pattern-matching}
 \usage{
-plotProActiveResults(pileup, ProActiveResults, elevFilter = NA, saveFilesTo)
+plotProActiveResults(pileup, ProActiveResults, elevFilter, saveFilesTo)
 }
 \arguments{
 \item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
@@ -13,7 +13,7 @@ plotProActiveResults(pileup, ProActiveResults, elevFilter = NA, saveFilesTo)
 \item{ProActiveResults}{The output from `ProActive()`.}
 
 \item{elevFilter}{Optional, only plot results with pattern-matches that achieved an
-elevation ratio (max/min) greater than the specified values. Defualt is NA (i.e. no filter).}
+elevation ratio (max/min) greater than the specified values. Default is no filter.}
 
 \item{saveFilesTo}{Optional, Provide a path to the directory you wish to save
 output to. A folder will be made within the provided directory to store

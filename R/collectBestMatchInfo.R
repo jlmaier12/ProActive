@@ -23,11 +23,7 @@ collectBestMatchInfo <- function(pattern, pileupSubset, elevOrGap, leftRightFull
   } else {
     which(pattern == maxOrMin2)[length(which(pattern == maxOrMin2))]
   }
-  startPos <- if (leftRightFull == "Left") {
-    1
-  } else {
-    (which(pattern == maxOrMin2)[1])
-  }
+  startPos <- ifelse(leftRightFull == "Left", 1, (which(pattern == maxOrMin2)[1]))
   bestMatchInfo <- list(diff, min(pattern), max(pattern), startPos, endPos, elevRatio, elevOrGap)
   return(bestMatchInfo)
 }

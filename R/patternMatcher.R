@@ -14,9 +14,10 @@
 #' @param mode Either "genome" or "metagenome".
 #' @param minContigLength The minimum contig/chunk size (in bp) to perform pattern-matching
 #' on. Default is 25000.
+#' @param verbose TRUE or FALSE. Print progress messages to console. Default is TRUE.
 #' @importFrom stats na.omit
 #' @keywords internal
-patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContigLength) {
+patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContigLength, verbose) {
   refNames <- unique(pileup[, 1])
   bestMatchList <- list()
   filteredOutContigs <- rep(NA, length(refNames))
@@ -24,8 +25,9 @@ patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContig
   A <- 1
   B <- 1
   C <- 1
-  lapply(seq_along(refNames), function(i) {
+  for (i in seq_along(refNames)) {
     refName <- refNames[[i]]
+    if(verbose){
     if (B == floor(length(refNames) / 4)) {
       message("A quarter of the way done with pattern-matching")
     }
@@ -35,19 +37,19 @@ patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContig
     if (B == floor((length(refNames) * 3) / 4)) {
       message("Almost done with pattern-matching!")
     }
-    B <<- B + 1
+    B <- B + 1
+    }
     pileupSubset <- pileup[which(pileup[, 1] == refName), ]
     if ((nrow(pileupSubset) * 100) < minContigLength) {
-      # if (pileupSubset[nrow(pileupSubset),3]< minContigLength) {
       filteredOutContigs[C] <<- refName
-      reason[C] <<- "Too Short"
-      C <<- C + 1
-      return(NULL)
+      reason[C] <- "Too Short"
+      C <- C + 1
+      next
     } else if (pileupSubset[(order(pileupSubset[, 2], decreasing = TRUE))[50], 2] <= 10) {
       filteredOutContigs[C] <<- refName
-      reason[C] <<- "Low read cov"
-      C <<- C + 1
-      return(NULL)
+      reason[C] <- "Low read cov"
+      C <- C + 1
+      next
     }
     pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
     noPatternBestMatch <- noPattern(pileupSubset)
@@ -69,9 +71,9 @@ patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContig
       fullGapBestMatch[[1]]
     )
     bestMatch <- bestMatchSumm[[which(bestMatchScoreSumm == min(bestMatchScoreSumm))[1]]]
-    bestMatchList[[A]] <<- c(bestMatch, refName)
-    A <<- A + 1
-  })
+    bestMatchList[[A]] <- c(bestMatch, refName)
+    A <- A + 1
+  }
   filteredOutContigsdf <- na.omit(cbind.data.frame(filteredOutContigs, reason))
   patternMatchingSumm <- list(bestMatchList, filteredOutContigsdf)
   return(patternMatchingSumm)

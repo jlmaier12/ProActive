@@ -11,25 +11,19 @@
 #' @param mode Either "genome" or "metagenome"
 #' @keywords internal
 classifSumm <- function(pileup, bestMatchList, windowSize, mode) {
-  refName <- rep(NA, length(bestMatchList))
-  elevRatio <- rep(NA, length(bestMatchList))
-  startPos <- rep(NA, length(bestMatchList))
-  endPos <- rep(NA, length(bestMatchList))
-  classification <- rep(NA, length(bestMatchList))
-  matchSize <- rep(NA, length(bestMatchList))
   if (length(bestMatchList) == 0) {
     stop("No pattern-matches detected")
   }
-  lapply(seq_along(bestMatchList), function(i) {
-    refName[i] <<- bestMatchList[[i]][[8]]
+  refName <- vapply(seq_along(bestMatchList), function(i) {bestMatchList[[i]][[8]]}, character(1))
+  elevRatio <- vapply(seq_along(bestMatchList), function(i) {bestMatchList[[i]][[6]]}, numeric(1))
+  startPos <- vapply(seq_along(bestMatchList), function(i) {bestMatchList[[i]][[4]]} * windowSize, numeric(1))
+  endPos <- vapply(seq_along(bestMatchList), function(i) {bestMatchList[[i]][[5]]} * windowSize, numeric(1))
+  classification <- vapply(seq_along(bestMatchList), function(i) {bestMatchList[[i]][[7]]}, character(1))
+  matchSize <- vapply(seq_along(bestMatchList), function(i) {
     pileupSubset <- pileup[which(pileup[, 1] == bestMatchList[[i]][[8]]), ]
     pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
-    elevRatio[i] <<- bestMatchList[[i]][[6]]
-    classification[i] <<- bestMatchList[[i]][[7]]
-    startPos[i] <<- pileupSubset[bestMatchList[[i]][[4]], 3]
-    endPos[i] <<- pileupSubset[bestMatchList[[i]][[5]], 3]
-    matchSize[i] <<- (length(seq(pileupSubset[bestMatchList[[i]][[4]], 3], pileupSubset[bestMatchList[[i]][[5]], 3], windowSize)) - 1) * windowSize
-  })
+    (length(seq(pileupSubset[bestMatchList[[i]][[4]], 3], pileupSubset[bestMatchList[[i]][[5]], 3], windowSize)) - 1) * windowSize},
+    numeric(1))
   classifSummTable <- cbind.data.frame(refName, classification, elevRatio, startPos, endPos, matchSize)
   return(classifSummTable)
 }
@@ -43,18 +37,14 @@ classifSumm <- function(pileup, bestMatchList, windowSize, mode) {
 #' all contigs/chunks classified by `ProActive()` pattern-matching
 #' @keywords internal
 removeNoPatterns <- function(bestMatchList) {
-  newBestMatchList <- list()
-  length(bestMatchList)
-  X <- 1
-  lapply(seq_along(bestMatchList), function(i) {
+  newBestMatchList <- lapply(seq_along(bestMatchList), function(i) {
     bestMatchInfo <- bestMatchList[[i]]
     classification <- bestMatchInfo[[7]]
     if (classification == "NoPattern") {
       return(NULL)
     } else {
-      newBestMatchList[[X]] <<- bestMatchInfo
-      X <<- X + 1
+      bestMatchInfo
     }
   })
-  return(newBestMatchList)
+  return(return(newBestMatchList[!vapply(newBestMatchList, is.null, logical(1))]))
 }

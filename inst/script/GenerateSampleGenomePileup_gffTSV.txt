@@ -1,0 +1,34 @@
+To generate the sampleGenomePileup and sampleGenomegffTSV dataset used for the vignette and README in ProActive, follow these instructions:
+
+1. Go to European Nucleotide Archive (ENA) study PRJNA203445
+2. Download the fastq files associated with:
+	- S. typhimurium LT2 genome sequencing read set: SAMN02367645 (SRR1060692.R1.fastq.gz, SRR1060692.R2.fastq.gz)
+
+   and the Salmonella enterica subsp. serovar typhimurium str. LT2 complete genome sequence:
+	- NCBI RefSeq (NC_003197.1)
+
+3. On the command line:
+
+- You will need to install:
+	- BBMap (https://github.com/BioInfoTools/BBMap) to run the following bash scripts (reformat.sh, bbmap.sh and pileup.sh) 
+	- PROKKA (https://github.com/tseemann/prokka) to run prokka
+
+	- Map reads to whole-community assembly:
+	$ bbmap.sh ambiguous=random qtrim=lr minid=0.97 nodisk=t ref=SalmonellaLT2Genome.fa in1=SRR1060692.R1.fastq.gz in2=SRR1060692.R2.fastq.gz outm=GenomeMapping.bam
+
+	- Create pileup files for VLP-fraction and whole-community:
+  	$ pileup.sh in=GenomeMapping.bam bincov=GenomeMapping.bincov100 binsize=100 stdev=t
+
+	- Generate .gff file:
+	$ prokka --outdir ./annotations/ --prefix LT2 SalmonellaLT2Genome.fa
+
+	- Remove excess information in .gff file for easy import into R:
+	$ grep ^NODE LT2.gff > cleaned_LT2.gff 
+
+
+4. In R, create pileup subsets used for sample data:
+
+	- Load pileup and gff.tsv file into R:
+	sampleGenomePileup <- read.delim("Q:/PATH/TO/FILE/GenomeMapping.bincov100", header=FALSE, comment.char="#")
+
+	sampleGenomegffTSV <- read.delim("C:/PATH/TO/FILE/cleaned_LT2.gff ", header=FALSE)

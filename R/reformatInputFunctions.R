@@ -2,28 +2,28 @@
 #'
 #' Re-averages windows of pileup files with 100bp windows to reduce pileup size.
 #'
-#' @param pileup A .txt file containing mapped sequencing read coverages averaged over
-#' 100 bp windows/bins.
+#' @param pileupSubset A subset of the pileup that pertains only to the contig/chunk
+#'  currently being assessed.
 #' @param windowSize The number of basepairs to average read coverage values over.
 #' Options are 100, 200, 500, 1000 ONLY. Default is 1000.
 #' @param mode Either "genome" or "metagenome"
 #' @keywords internal
-changewindowSize <- function(pileup, windowSize, mode) {
+changewindowSize <- function(pileupSubset, windowSize, mode) {
   coverage <- vector()
   X <- 0
   Y <- windowSize / 100
   repeat{
-    coverage <- c(coverage, mean(pileup[c(X:Y), 2]))
+    coverage <- c(coverage, mean(pileupSubset[c(X:Y), 2]))
     X <- X + (windowSize / 100)
     Y <- Y + (windowSize / 100)
-    if (Y > nrow(pileup)) break
+    if (Y > nrow(pileupSubset)) break
   }
   if (mode == "genome") {
-    position <- seq(pileup[1, 3], pileup[nrow(pileup), 3], length.out = length(coverage))
+    position <- seq(pileupSubset[1, 3], pileupSubset[nrow(pileupSubset), 3], length.out = length(coverage))
   } else {
     position <- seq(windowSize, length(coverage) * windowSize, windowSize)
   }
-  refName <- rep(pileup[1, 1], length(position))
+  refName <- rep(pileupSubset[1, 1], length(position))
   newdataset <- cbind.data.frame(refName, coverage, position)
   newdataset[do.call(cbind, lapply(newdataset, is.nan))] <- 0
   return(newdataset)
@@ -50,7 +50,7 @@ pileupFormatter <- function(pileup, mode) {
       }
     } else {
       if (length(which(pileup[, i] == 100)) > 1) {
-        posColIdx <<- i
+        posColIdx <- i
       }
     }
   }

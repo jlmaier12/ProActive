@@ -28,10 +28,11 @@
 #' on. Default is 25000.
 #' @param chunkSize If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
 #' chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
-#' `chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.
+#' `chunkSize` determines the size (in bp) of each 'chunk'. Default is 100000.
 #' @param IncludeNoPatterns TRUE or FALSE, If TRUE the noPattern pattern-matches will
 #' be included in the ProActive PatternMatches output list. If you would like to visualize
 #' the noPattern pattern-matches in `plotProActiveResults()`, this should be set to TRUE.
+#' @param verbose TRUE or FALSE. Print progress messages to console. Default is TRUE.
 #' @param saveFilesTo Optional, Provide a path to the directory you wish to save
 #' output to. A folder will be made within the provided directory to store
 #' results.
@@ -39,23 +40,15 @@
 #' @return A list containing 6 objects described in the function description.
 #' @export
 #' @examples
-#' ## Metagenome mode with gffTSV
 #' metagenome_results <- ProActive(
 #'   pileup = sampleMetagenomePileup,
 #'   mode = "metagenome",
 #'   gffTSV = sampleMetagenomegffTSV
 #' )
-#'
-#' ## Genome mode without gffTSV
-#' genome_results <- ProActive(
-#'   pileup = exampleGenomePileupSubset,
-#'   mode = "genome"
-#' )
-#'
-#' ##gffTSV is optional!
 ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FALSE,
                       minSize = 10000, maxSize = Inf, minContigLength = 30000,
-                      chunkSize = 100000, IncludeNoPatterns = FALSE, saveFilesTo) {
+                      chunkSize = 100000, IncludeNoPatterns = FALSE, verbose = TRUE,
+                      saveFilesTo) {
   ## error catching
   if ((chunkSize %% 100) > 0) {
     stop("chunkSize must be divisible by 100")
@@ -73,55 +66,58 @@ ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FA
     stop("Pileup file MUST have a windowSize/binsize of 100!")
   }
   startTime <- Sys.time()
-  message("Preparing input file for pattern-matching...")
+  if(verbose){message("Preparing input file for pattern-matching...")}
   pileup <- pileupFormatter(pileup, mode)
   if (mode == "genome") {
     pileup <- genomeChunks(pileup, chunkSize)
   }
-  if (chunkContigs == TRUE) {
+  if (mode == "metagenome" & chunkContigs == TRUE) {
     pileup <- contigChunks(pileup, chunkSize)
   }
-  message("Starting pattern-matching...")
-  patternMatchSummary <- patternMatcher(pileup, windowSize, minSize, maxSize, mode, minContigLength)
-  if (IncludeNoPatterns == TRUE) {
+  if(verbose){message("Starting pattern-matching...")}
+  patternMatchSummary <- patternMatcher(pileup, windowSize, minSize, maxSize, mode, minContigLength, verbose)
+  if (IncludeNoPatterns) {
     classifList <- patternMatchSummary[[1]]
   } else {
     classifList <- removeNoPatterns(patternMatchSummary[[1]])
   }
   filteredOutContigsDf <- patternMatchSummary[[2]]
-  message("Summarizing pattern-matching results")
+  if(verbose){message("Summarizing pattern-matching results")}
   summaryTable <- classifSumm(pileup, patternMatchSummary[[1]], windowSize, mode)
   if (missing(gffTSV) == FALSE) {
-    message("Finding gene predictions in elevated or gapped regions of read coverage...")
+    if(verbose){message("Finding gene predictions in elevated or gapped regions of read coverage...")}
     elevGapSummList <- removeNoPatterns(patternMatchSummary[[1]])
     GPSummTable <- GPsInElevGaps(elevGapSummList, windowSize, gffTSV, mode, chunkContigs)
   }
-  message("Finalizing output")
+  if(verbose){message("Finalizing output")}
   endTime <- Sys.time()
   duration <- difftime(endTime, startTime)
-  message("Execution time: ", round(duration[[1]], 2), units(duration))
-  message(
+  if(verbose){message("Execution time: ", round(duration[[1]], 2), units(duration))}
+  if(verbose){message(
     length(which(
       filteredOutContigsDf[, 2] == "Low read cov"
     )),
     " contigs were filtered out based on low read coverage"
-  )
-  message(
+  )}
+  if(verbose){message(
     length(which(
       filteredOutContigsDf[, 2] == "Too Short"
     )),
     " contigs were filtered out based on length (< minContigLength)"
-  )
+  )}
   arguments <- list(windowSize, mode, chunkSize, chunkContigs)
   cleanSummaryTable <- summaryTable[-which(summaryTable[,2]=="NoPattern"),]
   finalSummaryList <- list(summaryTable, cleanSummaryTable, classifList, filteredOutContigsDf, arguments)
   names(finalSummaryList) <- c("SummaryTable", "CleanSummaryTable", "PatternMatches", "FilteredOut", "Arguments")
   if (missing(gffTSV) == FALSE) {
     finalSummaryList <- c(finalSummaryList, list(GPSummTable))
-    names(finalSummaryList)[6] <- "GenePredictTable"
+    names(finalSummaryList)[6] <- "GeneAnnotTable"
   }
   table <- (table(summaryTable[, 2]))
-  message(paste0(capture.output(table), collapse = "\n"))
+  if(verbose){message(paste0(capture.output(table), collapse = "\n"))}
+  if(mode == "genome" || (mode == "metagenome" & chunkContigs == TRUE)){
+    linkChunks(classifList, pileup, windowSize, mode, verbose)
+  }
   if (missing(saveFilesTo) == FALSE) {
     ifelse(!dir.exists(paths = paste0(saveFilesTo, "\\ProActiveOutput")),
       dir.create(paste0(saveFilesTo, "\\ProActiveOutput")),
@@ -135,7 +131,7 @@ ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FA
         GPSummTable,
         file = paste0(
           saveFilesTo,
-          "\\ProActiveOutput\\ProActiveGenePredictstable.csv"
+          "\\ProActiveOutput\\ProActiveGeneAnnotsTable.csv"
         ),
         sep = ",",
         row.names = FALSE

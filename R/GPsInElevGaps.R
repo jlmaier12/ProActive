@@ -17,13 +17,12 @@
 #' @importFrom dplyr bind_rows
 #' @keywords internal
 GPsInElevGaps <- function(elevGapSummList, windowSize, gffTSV, mode, chunkContigs) {
-  GPlist <- list()
   colnames(gffTSV) <- c("seqid", "source", "type", "start", "end", "score", "strand", "phase", "attributes")
   if (TRUE %in% (str_detect(gffTSV[,9], regex('product', ignore_case = T)))){
     product <- str_extract_all(gffTSV [,9], regex("(?<=product=)[\\s\\S]*",ignore_case = T))
     gffTSV$geneproduct <- product
   }
-  lapply(seq_along(elevGapSummList), function(i) {
+  GPlist <- lapply(seq_along(elevGapSummList), function(i) {
     trueRefName <- elevGapSummList[[i]][[8]]
     if(mode == "metagenome"){
       refName <- elevGapSummList[[i]][[8]]
@@ -41,8 +40,9 @@ GPsInElevGaps <- function(elevGapSummList, windowSize, gffTSV, mode, chunkContig
       return(NULL)
     }
     GPs$Classification <- elevGapSummList[[i]][[7]]
-    GPlist[[i]] <<- GPs
+    GPs
   })
+  GPlist <- (GPlist[!vapply(GPlist, is.null, logical(1))])
   GPsummTable <- bind_rows(GPlist)
   return(as.data.frame(GPsummTable))
 }

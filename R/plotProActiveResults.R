@@ -7,7 +7,7 @@
 #' 100 bp windows/bins.
 #' @param ProActiveResults The output from `ProActive()`.
 #' @param elevFilter Optional, only plot results with pattern-matches that achieved an
-#' elevation ratio (max/min) greater than the specified values. Defualt is NA (i.e. no filter).
+#' elevation ratio (max/min) greater than the specified values. Default is no filter.
 #' @param saveFilesTo Optional, Provide a path to the directory you wish to save
 #' output to. A folder will be made within the provided directory to store
 #' results.
@@ -17,8 +17,8 @@
 #' @examples
 #' ProActivePlots <- plotProActiveResults(sampleMetagenomePileup,
 #'                                        sampleMetagenomeResults)
-plotProActiveResults <- function(pileup, ProActiveResults, elevFilter = NA, saveFilesTo) {
-  position <- coverage <- NULL
+plotProActiveResults <- function(pileup, ProActiveResults, elevFilter, saveFilesTo) {
+  position <- coverage <- pattern <- NULL
   windowSize <- ProActiveResults[[5]][[1]]
   mode <- ProActiveResults[[5]][[2]]
   chunkSize <- ProActiveResults[[5]][[3]]
@@ -26,34 +26,29 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter = NA, save
   summaryTable <- ProActiveResults[[1]]
   patternMatches <- ProActiveResults[[3]]
   pileup <- pileupFormatter(pileup, mode)
-  plots <- list()
-  refNames <- rep(NA, nrow(summaryTable))
   if (mode == "genome") {
     pileup <- genomeChunks(pileup, chunkSize)
   }
-  if (contigChunk == "TRUE") {
+  if (mode == "metagenome" & contigChunk == "TRUE") {
     pileup <- contigChunks(pileup, chunkSize)
   }
-  X <- 1
-  lapply(seq_along(patternMatches), function(i) {
+  elevFilter <- ifelse(missing(elevFilter) == TRUE, NA, elevFilter)
+  plots <- lapply(seq_along(patternMatches), function(i) {
     refName <- patternMatches[[i]][[8]]
     matchInfo <- summaryTable[which(summaryTable[, 1] == refName), ]
     classification <- matchInfo[, 2]
-    elevRatio <- ifelse(classification == "NoPattern", "NA", round(matchInfo[, 4], digits = 3))
-    if (is.na(elevFilter) == FALSE) {
-      if (elevRatio < elevFilter) {
-        return(NULL)
-      }
-    }
+    elevRatio <- ifelse(classification == "NoPattern", "NA", round(matchInfo[, 3], digits = 3))
+    if (is.na(elevFilter) == FALSE & elevRatio < elevFilter) {return(NULL)}
     pileupSubset <- pileup[which(pileup[, 1] == refName), ]
     pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
-    pattern <- patternBuilder(pileupSubset, patternMatches[[i]])
-    patternMatch <- cbind(pileupSubset, pattern)
+    patternMatch <- patternBuilder(pileupSubset, patternMatches[[i]])
     matchLength <- matchInfo[, 6]
     plot <- ggplot(data = patternMatch, aes(x = position, y = coverage)) +
-      geom_area(data = patternMatch, aes(x = position, y = coverage), fill = "seagreen3") +
-      geom_line(y = pattern, linewidth = 1) +
-      labs(title = paste(refName, classification), subtitle = paste("Matching-region size (bp):", matchLength, "Elevation ratio:", elevRatio), x = "contig position") +
+      geom_area(fill = "seagreen3") +
+      geom_line(data = patternMatch, aes(y = pattern), linewidth = 1) +
+      labs(title = paste(refName, classification),
+           subtitle = paste("Matching-region size (bp):", matchLength, "Elevation ratio:", elevRatio),
+           x = "Base pair (bp) position") +
       theme(
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -70,11 +65,18 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter = NA, save
           l = 2
         )
       )
-    plots[[X]] <<- plot
-    refNames[[X]] <<- refName
-    X <<- X + 1
+    plot
   })
-  refNames <- na.omit(refNames)
+  plots <- (plots[!vapply(plots, is.null, logical(1))])
+  refNames <- vapply(seq_along(patternMatches), function(i) {
+    refName <- patternMatches[[i]][[8]]
+    matchInfo <- summaryTable[which(summaryTable[, 1] == refName), ]
+    classification <- matchInfo[, 2]
+    elevRatio <- ifelse(classification == "NoPattern", "NA", round(matchInfo[, 3], digits = 3))
+    if (is.na(elevFilter) == FALSE & elevRatio < elevFilter) {return(NULL)}
+    refName
+  }, character(1))
+  refNames <- (refNames[!vapply(refNames, is.null, logical(1))])
   names(plots) <- refNames
   if (missing(saveFilesTo) == FALSE) {
     ifelse(!dir.exists(paths = paste0(saveFilesTo, "\\ProActiveOutputPlots")),

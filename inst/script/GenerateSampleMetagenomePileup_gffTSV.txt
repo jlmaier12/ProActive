@@ -1,0 +1,87 @@
+To generate the sampleMetagenomePileup and sampleMetagenomegffTSV dataset used for the examples, vignette and README in ProActive, follow these instructions:
+
+1. Go to European Nucleotide Archive (ENA) study PRJEB33536
+2. Download the fastq files associated with:
+	- Whole-community raw reads: SAMEA5795756 and SAMEA5778182 (205_2M_75bp.fastq.gz, 205_2M.R1.fastq.gz, 205_2M.R2.fastq.gz)
+
+   and the fasta file associated with the whole-community assembly (filtered for contigs greater than 40,000bp):
+	- Assembly: ERZ1273841 (205_2M.Spades3_contigs_larger40kb.fa.gz)
+
+The methods used to generate the sequencing data above are detailed in "Transductomics: sequencing-based detection and analysis of transduced DNA in pure cultures and microbial communities"
+(https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-020-00935-5#availability-of-data-and-materials). 
+	
+3. On the command line:
+
+- You will need to install:
+	- BBMap (https://github.com/BioInfoTools/BBMap) to run the following bash scripts (reformat.sh, bbmap.sh and pileup.sh) 
+	- PROKKA (https://github.com/tseemann/prokka) to run prokka
+
+	- Append raw reads for mapping:
+	$ cp 205_2M_75bp.fastq.gz WCFraction_allRaw.fastq.gz
+	$ reformat.sh app=t in=205_2M.R1.fastq.gz out=allRawReads.fastq.gz
+	$ reformat.sh app=t in=205_2M.R2.fastq.gz out=allRawReads.fastq.gz
+
+	- Map appended reads to whole-community assembly:
+	$ bbmap.sh ambiguous=random qtrim=lr minid=0.97 nodisk=t ref=205_2M.Spades3_contigs_larger40kb.fa.gz in1=allRawReads.fastq.gz outm=Mapping.bam
+
+	- Create pileup files for VLP-fraction and whole-community:
+  	$ pileup.sh in=Mapping.bam bincov=MetagenomeMapping.bincov100 binsize=100 stdev=t
+
+	- Generate .gff file:
+	$ prokka --outdir ./annotations/ --prefix 205_2M.Spades3 205_2M.Spades3_contigs_larger40kb.fa.gz
+
+	- Remove excess information in .gff file for easy import into R:
+	$ grep ^NODE 205_2M.Spades3.gff > cleaned_205_2M.Spades3.gff 
+
+
+4. In R, create pileup subsets used for sample data:
+
+	- Load pileup and gff.tsv file into R:
+	WholeCommFullPileup <- read.delim("Q:/PATH/TO/FILE/MetagenomeMapping.bincov100", header=FALSE, comment.char="#")
+
+	WholeCommGeneAnnots <- read.delim("C:/PATH/TO/FILE/cleaned_205_2M.Spades3.gff ", header=FALSE)
+
+	- Load the following `pileupFormatter` function:
+	pileupFormatter <- function(pileup) {
+  			   colClasses <- vapply(pileup, class, character(1))
+  			   for (i in c(which(colClasses == "integer"))) {
+    				if (length(which(pileup[, i] == 100)) > 1) {
+      				posColIdx <- i
+    				}
+  			   }
+  			   cleanPileup <-
+    				cbind.data.frame(
+      				pileup[, which(colClasses == "character")],
+      				pileup[, which(colClasses == "numeric")],
+      				pileup[, posColIdx]
+    				)
+  			   colnames(cleanPileup) <- c("contigName", "coverage", "position")
+  		           cleanPileup$contigName <- gsub("\\s.*", "", cleanPileup$contigName)
+  		           return(cleanPileup)
+}
+
+	- Reformat/clean the pileup file for easier row indexing: 
+	WholeCommFullPileup_clean <- pileupFormatter(VLPFractionFullPileup) 
+
+	- Subset pileup and gff files to only include rows pertaining to specific contigs in pileup files:
+	NODE_1911 <- WholeCommFullPileup[which(WholeCommFullPileup_clean[,1] == "NODE_1911"),] #NODE_1911: elevation off left
+	NODE_1583 <- WholeCommFullPileup[which(WholeCommFullPileup_clean[,1] == "NODE_1583"),] #NODE_1583: elevation off right
+	NODE_1884 <- WholeCommFullPileup[which(WholeCommFullPileup_clean[,1] == "NODE_1884"),] #NODE_1884: gap off right
+	NODE_1255 <- WholeCommFullPileup[which(WholeCommFullPileup_clean[,1] == "NODE_1255"),] #NODE_1255: gap off left
+	NODE_368 <- WholeCommFullPileup[which(WholeCommFullPileup_clean[,1] == "NODE_368"),] #NODE_368: full gap
+	NODE_617 <- WholeCommFullPileup[which(WholeCommFullPileup_clean[,1] == "NODE_617"),] #NODE_617: elevation full
+	NODE_1625 <- WholeCommFullPileup[which(WholeCommFullPileup_clean[,1] == "NODE_1625"),] #NODE_1625: no pattern
+
+	NODE_1911ORFS <- WholeCommGeneAnnots[which(WholeCommGeneAnnots[,1] == "NODE_1911"),] #NODE_1911: elevation off left
+	NODE_1583ORFS <- WholeCommGeneAnnots[which(WholeCommGeneAnnots[,1] == "NODE_1583"),] #NODE_1583: elevation off right
+	NODE_1884ORFS <- WholeCommGeneAnnots[which(WholeCommGeneAnnots[,1] == "NODE_1884"),] #NODE_1884: gap off right
+	NODE_1255ORFS <- WholeCommGeneAnnots[which(WholeCommGeneAnnots[,1] == "NODE_1255"),] #NODE_1255: gap off left
+	NODE_368ORFS <- WholeCommGeneAnnots[which(WholeCommGeneAnnots[,1] == "NODE_368"),] #NODE_368: full gap
+	NODE_617ORFS <- WholeCommGeneAnnots[which(WholeCommGeneAnnots[,1] == "NODE_617"),] #NODE_617: elevation full
+	NODE_1625ORFS <- WholeCommGeneAnnots[which(WholeCommGeneAnnots[,1] == "NODE_1625"),] #NODE_1625: no pattern
+
+
+	- Create final pileup and gffTSV subsets:
+	sampleMetagenomePileup <- rbind.data.frame(NODE_1911, NODE_1583, NODE_1884, NODE_1255, NODE_368, NODE_617, NODE_1625)
+
+	sampleMetagenomegffTSV <- rbind.data.frame(NODE_1911ORFS, NODE_1583ORFS, NODE_1884ORFS, NODE_1255ORFS, NODE_368ORFS, NODE_617ORFS, NODE_1625ORFS)

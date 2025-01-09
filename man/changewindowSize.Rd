@@ -4,11 +4,11 @@
 \alias{changewindowSize}
 \title{Change the pileup window size}
 \usage{
-changewindowSize(pileup, windowSize, mode)
+changewindowSize(pileupSubset, windowSize, mode)
 }
 \arguments{
-\item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
-100 bp windows/bins.}
+\item{pileupSubset}{A subset of the pileup that pertains only to the contig/chunk
+currently being assessed.}
 
 \item{windowSize}{The number of basepairs to average read coverage values over.
 Options are 100, 200, 500, 1000 ONLY. Default is 1000.}

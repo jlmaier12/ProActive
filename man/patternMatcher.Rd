@@ -4,7 +4,15 @@
 \alias{patternMatcher}
 \title{Controller function for pattern-matching}
 \usage{
-patternMatcher(pileup, windowSize, minSize, maxSize, mode, minContigLength)
+patternMatcher(
+  pileup,
+  windowSize,
+  minSize,
+  maxSize,
+  mode,
+  minContigLength,
+  verbose
+)
 }
 \arguments{
 \item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
@@ -21,6 +29,8 @@ patternMatcher(pileup, windowSize, minSize, maxSize, mode, minContigLength)
 
 \item{minContigLength}{The minimum contig/chunk size (in bp) to perform pattern-matching
 on. Default is 25000.}
+
+\item{verbose}{TRUE or FALSE. Print progress messages to console. Default is TRUE.}
 }
 \description{
 Creates the pileupSubset, representative of one contig/chunk, used as input for

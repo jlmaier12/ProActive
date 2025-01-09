@@ -1,3 +1,3 @@
-# ProActive 0.0.1.9000
+# ProActive 0.0.1
 
 * Initial CRAN submission.

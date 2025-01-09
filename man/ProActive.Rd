@@ -15,6 +15,7 @@ ProActive(
   minContigLength = 30000,
   chunkSize = 1e+05,
   IncludeNoPatterns = FALSE,
+  verbose = TRUE,
   saveFilesTo
 )
 }
@@ -44,11 +45,13 @@ on. Default is 25000.}
 
 \item{chunkSize}{If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
 chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
-`chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.}
+`chunkSize` determines the size (in bp) of each 'chunk'. Default is 100000.}
 
 \item{IncludeNoPatterns}{TRUE or FALSE, If TRUE the noPattern pattern-matches will
 be included in the ProActive PatternMatches output list. If you would like to visualize
 the noPattern pattern-matches in `plotProActiveResults()`, this should be set to TRUE.}
+
+\item{verbose}{TRUE or FALSE. Print progress messages to console. Default is TRUE.}
 
 \item{saveFilesTo}{Optional, Provide a path to the directory you wish to save
 output to. A folder will be made within the provided directory to store
@@ -70,18 +73,9 @@ gffTSV files, then the last list is a table consisting of ORFs found within
 the detected gaps and elevations in read coverage.
 }
 \examples{
-## Metagenome mode with gffTSV
 metagenome_results <- ProActive(
   pileup = sampleMetagenomePileup,
   mode = "metagenome",
   gffTSV = sampleMetagenomegffTSV
 )
-
-## Genome mode without gffTSV
-genome_results <- ProActive(
-  pileup = exampleGenomePileupSubset,
-  mode = "genome"
-)
-
-##gffTSV is optional!
 }
