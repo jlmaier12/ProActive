@@ -13,7 +13,7 @@ mean absolute difference (match-score) is used for classification."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">ProActive</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,15 @@ mean absolute difference (match-score) is used for classification.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">patternMatcher</span><span class="op">(</span><span class="va">pileup</span>, <span class="va">windowSize</span>, <span class="va">minSize</span>, <span class="va">maxSize</span>, <span class="va">mode</span>, <span class="va">minContigLength</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">patternMatcher</span><span class="op">(</span></span>
+<span>  <span class="va">pileup</span>,</span>
+<span>  <span class="va">windowSize</span>,</span>
+<span>  <span class="va">minSize</span>,</span>
+<span>  <span class="va">maxSize</span>,</span>
+<span>  <span class="va">mode</span>,</span>
+<span>  <span class="va">minContigLength</span>,</span>
+<span>  <span class="va">verbose</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,6 +91,10 @@ mean absolute difference (match-score) is used for classification.</p>
 <dt id="arg-mincontiglength">minContigLength<a class="anchor" aria-label="anchor" href="#arg-mincontiglength"></a></dt>
 <dd><p>The minimum contig/chunk size (in bp) to perform pattern-matching
 on. Default is 25000.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>TRUE or FALSE. Print progress messages to console. Default is TRUE.</p></dd>
 
 </dl></div>
 

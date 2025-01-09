@@ -17,8 +17,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Detect Elevations and Gaps in Mapped Sequencing Read Coverage">
-<meta name="description" content="The `ProActive` R package automatically detects regions of gapped and elevated read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize and visualize read coverage patterns in both genomes and metagenomes. Optionally, users may provide gene annotations associated with their genome or metagenome in the form of a .gff file. In this case, `ProActive` will generate an additional output table containing the ORFs found within the detected regions of gapped and elevated read coverage.">
-<meta property="og:description" content="The `ProActive` R package automatically detects regions of gapped and elevated read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize and visualize read coverage patterns in both genomes and metagenomes. Optionally, users may provide gene annotations associated with their genome or metagenome in the form of a .gff file. In this case, `ProActive` will generate an additional output table containing the ORFs found within the detected regions of gapped and elevated read coverage.">
+<meta name="description" content="The `ProActive` R package automatically detects regions of gapped and elevated read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize and visualize read coverage patterns in both genomes and metagenomes. Optionally, users may provide gene predictions associated with their genome or metagenome in the form of a .gff file. In this case, `ProActive` will generate an additional output table containing the gene predictions found within the detected regions of gapped and elevated read coverage.">
+<meta property="og:description" content="The `ProActive` R package automatically detects regions of gapped and elevated read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize and visualize read coverage patterns in both genomes and metagenomes. Optionally, users may provide gene predictions associated with their genome or metagenome in the form of a .gff file. In this case, `ProActive` will generate an additional output table containing the gene predictions found within the detected regions of gapped and elevated read coverage.">
 <meta property="og:image" content="https://jlmaier12.github.io/ProActive/logo.png">
 </head>
 <body>
@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ProActive</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,21 +66,21 @@
 </div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>The <code>ProActive</code> R package automatically detects regions of gapped and elevated read coverage using a pattern-matching algorithm. <code>ProActive</code> can detect, characterize and visualize read coverage patterns in both genomes and metagenomes. Optionally, users may provide gene predictions associated with their genome or metagenome in the form of a .gff file. In this case, <code>ProActive</code> will generate an additional output table containing the gene predictions found within the detected regions of gapped and elevated read coverage. <code>ProActive</code> is best used as a screening method to identify genetic regions for further investigation.</p>
+<p><strong>The <code>ProActive</code> R package automatically detects regions of gapped and elevated read coverage using a pattern-matching algorithm. <code>ProActive</code> can detect, characterize and visualize read coverage patterns in both genomes and metagenomes. Optionally, users may provide gene predictions associated with their genome or metagenome in the form of a .gff file. In this case, <code>ProActive</code> will generate an additional output table containing the gene predictions found within the detected regions of gapped and elevated read coverage. <code>ProActive</code> is best used as a screening method to identify genetic regions for further investigation.</strong></p>
 <p>Elevations or gaps in read coverage can be caused by differential abundance of specific genetic elements. For example, an elevation in read coverage may be caused by prophage activation. When a prophage activates and enters the lytic cycle, its genome begins replicating and the ratio of phage:bacterial genomes in the cell begins to increase. Because there are more phage genomes than bacterial genomes, during sequencing more phage reads are generated than bacterial. When these reads are mapped back to their associated reference sequence, the read coverage of the prophage region will be elevated in comparison to the read coverage of the bacterial genome on either side of the prophage. This same principle applies to temperate phage who are highly abundant in the environment as well as other mobile genetic elements that are freely present in the environment at a higher ratio than the originating or ‘host’ genome.</p>
 <p>Conversely, a gap in read coverage may indicate genetic heterogeneity in the associated bacterial population. Genetic variants with and without specific genetic elements, like prophage or certain genes, will produce differential abundances of sequencing reads that may form read coverage gaps. The formation of read coverage gaps due to genetic variants is dependent on the assembly (i.e. if the assembler assembles the genetic variants as separate entities or not). Gaps in read coverage may also form at regions with high mutation rates.</p>
 <div class="section level3">
 <h3 id="input-files">Input files<a class="anchor" aria-label="anchor" href="#input-files"></a>
 </h3>
 <div class="section level4">
-<h4 id="pileup-file">Pileup file<a class="anchor" aria-label="anchor" href="#pileup-file"></a>
+<h4 id="pileup-file">Pileup file:<a class="anchor" aria-label="anchor" href="#pileup-file"></a>
 </h4>
 <p>ProActive detects read coverage patterns using a pattern-matching algorithm that operates on pileup files. A pileup file is a file format where each row summarizes the ‘pileup’ of reads at specific genomic locations. Pileup files can be used to generate a rolling mean of read coverages and associated base pair positions which reduces data size while preserving read coverage patterns. <strong>ProActive requires that input pileups files</strong> <strong>be generated using a 100 bp window/bin size.</strong></p>
-<p>Pileup files can be generated by either mapping sequencing reads to either a metagenome or genome fasta. <strong>Read mapping should be performed using a high</strong> <strong>minimum identity (0.97 or higher) and random mapping of ambiguous reads.</strong> The pileup files needed for ProActive are generated using the .bam files produced during read mapping.</p>
-<p>Some read mappers, like <a href="https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbmap-guide/" class="external-link">BBMap</a>, allow for the generation of pileup files in the <a href="https://github.com/BioInfoTools/BBMap/blob/master/sh/bbmap.sh" class="external-link"><code>bbmap.sh</code></a> command with use of the <code>bincov</code> output with the <code>covbinsize=100</code> parameter/argument. <strong>Otherwise, BBMap’s</strong> <strong><a href="https://github.com/BioInfoTools/BBMap/blob/master/sh/pileup.sh" class="external-link"><code>pileup.sh</code></a></strong> <strong>can convert .bam files produced by any read mapper to pileup files</strong> <strong>compatible with ProActive using the <code>bincov</code> output with <code>binsize=100</code>.</strong></p>
+<p>Pileup files can be generated by mapping sequencing reads to a metagenome or genome fasta. <strong>Read mapping should be performed using a high</strong> <strong>minimum identity (0.97 or higher) and random mapping of ambiguous reads.</strong> The pileup files needed for ProActive are generated using the .bam files produced during read mapping. Some read mappers, like <a href="https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbmap-guide/" class="external-link">BBMap</a>, allow for the generation of pileup files in the <a href="https://github.com/BioInfoTools/BBMap/blob/master/sh/bbmap.sh" class="external-link"><code>bbmap.sh</code></a> command with use of the <code>bincov</code> output with the <code>covbinsize=100</code> parameter/argument. <strong>Otherwise, BBMap’s</strong> <strong><a href="https://github.com/BioInfoTools/BBMap/blob/master/sh/pileup.sh" class="external-link"><code>pileup.sh</code></a></strong> <strong>can convert .bam files produced by any read mapper to pileup files</strong> <strong>compatible with ProActive using the <code>bincov</code> output with <code>binsize=100</code>.</strong></p>
+<p><strong>NOTE:</strong> For detailed information on input file format, please see the vignette. Users may also use the ‘sampleMetagenomePileup’ and ‘sampleGenomePileup’ files that come pre-loaded with ProActive as a reference.</p>
 </div>
 <div class="section level4">
-<h4 id="gfftsv">gffTSV<a class="anchor" aria-label="anchor" href="#gfftsv"></a>
+<h4 id="gfftsv">gffTSV:<a class="anchor" aria-label="anchor" href="#gfftsv"></a>
 </h4>
 <p>ProActive optionally accepts a .gff file as input. The .gff file must be associated with the same metagenome or genome used to create your pileup file. The .gff file should be a TSV and should follow the same general format described <a href="https://en.wikipedia.org/wiki/General_feature_format#:~:text=In%20bioinformatics%2C%20the%20general%20feature,DNA%2C%20RNA%20and%20protein%20sequences." class="external-link">here</a>.</p>
 </div>
@@ -88,16 +88,24 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of ProActive from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>Install ProActive from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"jlmaier12/ProActive"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ProActive"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jlmaier12/ProActive" class="external-link">ProActive</a></span><span class="op">)</span></span></code></pre></div>
+<p>Install the development version of ProActive from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jlmaier12/ProActive"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jlmaier12/ProActive" class="external-link">ProActive</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <p>Metagenome mode:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jlmaier12/ProActive" class="external-link">ProActive</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">MetagenomeProActive</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ProActive.html">ProActive</a></span><span class="op">(</span></span>
@@ -113,7 +121,7 @@
 <span><span class="co">#&gt; Summarizing pattern-matching results</span></span>
 <span><span class="co">#&gt; Finding gene predictions in elevated or gapped regions of read coverage...</span></span>
 <span><span class="co">#&gt; Finalizing output</span></span>
-<span><span class="co">#&gt; Execution time: 2.17secs</span></span>
+<span><span class="co">#&gt; Execution time: 1.98secs</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on low read coverage</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on length (&lt; minContigLength)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -123,7 +131,7 @@
 <span><span class="va">MetagenomePlots</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/plotProActiveResults.html">plotProActiveResults</a></span><span class="op">(</span>pileup <span class="op">=</span> <span class="va">sampleMetagenomePileup</span>,</span>
 <span>                                        ProActiveResults <span class="op">=</span> <span class="va">MetagenomeProActive</span><span class="op">)</span></span></code></pre></div>
 <p>Genome mode:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GenomeProActive</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ProActive.html">ProActive</a></span><span class="op">(</span></span>
 <span>  pileup <span class="op">=</span> <span class="va">sampleGenomePileup</span>,</span>
 <span>  mode <span class="op">=</span> <span class="st">"genome"</span>,</span>
@@ -137,7 +145,7 @@
 <span><span class="co">#&gt; Summarizing pattern-matching results</span></span>
 <span><span class="co">#&gt; Finding gene predictions in elevated or gapped regions of read coverage...</span></span>
 <span><span class="co">#&gt; Finalizing output</span></span>
-<span><span class="co">#&gt; Execution time: 35.96secs</span></span>
+<span><span class="co">#&gt; Execution time: 36.98secs</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on low read coverage</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on length (&lt; minContigLength)</span></span>
 <span><span class="co">#&gt; </span></span>

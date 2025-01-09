@@ -17,9 +17,9 @@
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="ProActive">
-<meta name="description" content="The `ProActive` R package automatically detects regions of gapped and elevated  read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize  and visualize read coverage patterns in both genomes and metagenomes. Optionally,  users may provide gene annotations associated with their genome or metagenome  in the form of a .gff file. In this case, `ProActive` will generate an additional  output table containing the ORFs found within the detected regions of gapped  and elevated read coverage.
+<meta name="description" content="The `ProActive` R package automatically detects regions of gapped and elevated  read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize  and visualize read coverage patterns in both genomes and metagenomes. Optionally,  users may provide gene annotations associated with their genome or metagenome  in the form of a .gff file. In this case, `ProActive` will generate an additional  output table containing the annotations found within the detected regions of gapped  and elevated read coverage.
 ">
-<meta property="og:description" content="The `ProActive` R package automatically detects regions of gapped and elevated  read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize  and visualize read coverage patterns in both genomes and metagenomes. Optionally,  users may provide gene annotations associated with their genome or metagenome  in the form of a .gff file. In this case, `ProActive` will generate an additional  output table containing the ORFs found within the detected regions of gapped  and elevated read coverage.
+<meta property="og:description" content="The `ProActive` R package automatically detects regions of gapped and elevated  read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize  and visualize read coverage patterns in both genomes and metagenomes. Optionally,  users may provide gene annotations associated with their genome or metagenome  in the form of a .gff file. In this case, `ProActive` will generate an additional  output table containing the annotations found within the detected regions of gapped  and elevated read coverage.
 ">
 <meta property="og:image" content="https://jlmaier12.github.io/ProActive/logo.png">
 </head>
@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ProActive</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,7 +81,7 @@ Maier</h4>
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p><code>ProActive</code> automatically detects regions of gapped and
-elevated read coverage using a pattern-matching algorithm.
+elevated read coverage using a 2D pattern-matching algorithm.
 <code>ProActive</code> can detect, characterize and visualize read
 coverage patterns in both genomes and metagenomes. Optionally, users may
 provide gene predictions associated with their genome or metagenome in
@@ -97,24 +97,18 @@ and/or abundant mobile genetic elements (MGEs). MGEs that are actively
 replicating or are highly abundant may generate more sequencing reads
 than the rest of their host bacterium’s genome thus creating a region of
 elevated read coverage at the element’s insertion site(s).</p>
-<p>Gaps in read coverage can indicate heterogeneity of the bacterial
-genome sequence. Subpopulations of bacteria with and without a specific
-gene sequence may form gaps or dips in mapped read coverages. Genetic
-regions with high mutation rates may also generate gaps in read
+<p>Gaps in read coverage can indicate genetic heterogeneity in a
+bacterial population. Sub-populations of bacteria with and without
+specific gene sequences may form gaps or dips in mapped read coverages.
+Genetic regions with high mutation rates may also generate gaps in read
 coverage.</p>
-<p><strong>Note</strong> The read coverage pattern-matching imployed by
+<p><strong>Note:</strong> The read coverage pattern-matching employed by
 <code>ProActive</code> is only as good as the provided data. There are
 other non-biological situations that can create gaps or elevations in
 read coverage. For example, chimeric assemblies or contaminants can
 create odd read coverage artifacts. Because of this, ProActive is best
 used as a screening method to identify genetic regions for further
 investigation.</p>
-<div class="section level3">
-<h3 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
-</h3>
-<p>I’d like to thank Dr. Manuel Kleiner for his expertise and overall
-support throughout the development of ProActive!</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -123,11 +117,7 @@ support throughout the development of ProActive!</p>
 <h3 id="cran-install">CRAN install<a class="anchor" aria-label="anchor" href="#cran-install"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://pak.r-lib.org/" class="external-link">"pak"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"jlmaier12/ProActive"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ProActive"</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jlmaier12/ProActive" class="external-link">ProActive</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -156,8 +146,8 @@ coverages and associated base pair positions which reduces data size
 while preserving read coverage patterns. <strong>ProActive requires that
 input pileups files</strong> <strong>be generated using a 100 bp
 window/bin size.</strong></p>
-<p>Pileup files can be generated by either mapping sequencing reads to a
-metagenome or genome .fasta file. <strong>Read mapping should be
+<p>Pileup files can be generated by mapping sequencing reads to a
+metagenome or genome fasta file. <strong>Read mapping should be
 performed using a high</strong> <strong>minimum identity (0.97 or
 higher) and random mapping of ambiguous reads.</strong> The pileup files
 needed for ProActive are generated using the .bam files produced during
@@ -168,11 +158,12 @@ command with use of the <code>bincov</code> output with the
 <code>covbinsize=100</code> parameter/argument. <strong>Otherwise,
 BBMap’s</strong> <strong><a href="https://github.com/BioInfoTools/BBMap/blob/master/sh/pileup.sh" class="external-link"><code>pileup.sh</code></a></strong>
 <strong>can convert .bam files produced by any read mapper to pileup
-files</strong> <strong>using the <code>bincov</code> output with
-<code>binsize=100</code>.</strong></p>
+files compatible</strong> <strong>with ProActive using the
+<code>bincov</code> output with <code>binsize=100</code>.</strong></p>
+<p><strong>Pileup files must use a 100 bp window/bin size for the
+rolling mean!</strong></p>
 <p><strong>The input pileup file for metagenomes must have the following
-format:</strong> <strong>Pileup file must use a 100 bp window/bin size
-for the rolling</strong> <strong>mean.</strong></p>
+format:</strong></p>
 <p>Dataframe with four columns:</p>
 <ul>
 <li>V1: Contig accession</li>
@@ -286,15 +277,20 @@ NODE_1911 length_44214_cov_4.82142_ID_9560073
 </table>
 <p><strong>Note that the format for a genome pileup will be slightly
 different! The third</strong> <strong>column (V3) does not restart and
-the fourth column (V4) starts from 0.</strong></p>
+the fourth column (V4) starts from 0. ProActive</strong>
+<strong>accounts for the differences in pileup formats between genomes
+and metagenomes.</strong></p>
+<p>Users may also use the ‘sampleMetagenomePileup’ and
+‘sampleGenomePileup’ files that come pre-loaded with ProActive as
+references for proper input file format.</p>
 </div>
 <div class="section level3">
 <h3 id="gff-tsv">gff TSV<a class="anchor" aria-label="anchor" href="#gff-tsv"></a>
 </h3>
-<p>ProActive optionally accepts a .gff file as input. The .gff file must
-be associated with the same metagenome or genome used to create your
-pileup file. The .gff file should be a TSV and should follow the same
-general format described <a href="https://en.wikipedia.org/wiki/General_feature_format#:~:text=In%20bioinformatics%2C%20the%20general%20feature,DNA%2C%20RNA%20and%20protein%20sequences." class="external-link">here</a>.</p>
+<p>Optionally, ProActive will accept a .gff file as additional input.
+The .gff file must be associated with the same metagenome or genome used
+to create your pileup file. The .gff file should be a TSV and should
+follow the same general format described <a href="https://en.wikipedia.org/wiki/General_feature_format#:~:text=In%20bioinformatics%2C%20the%20general%20feature,DNA%2C%20RNA%20and%20protein%20sequences." class="external-link">here</a>.</p>
 <strong>The input .gff file must have the following format
 exactly:</strong>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
@@ -516,13 +512,14 @@ sequence:UniProtKB:Q97FZ9;locus_tag=NJKKNKEE_164180;product=Rubrerythrin-1
 </tr>
 </tbody>
 </table>
-<p>(Hint- if you are using a gff file output by <a href="https://github.com/tseemann/prokka" class="external-link">PROKKA</a>, you may need to
+<p>(<strong>Hint</strong>- if you are using a gff file output by <a href="https://github.com/tseemann/prokka" class="external-link">PROKKA</a>, you may need to
 remove some unnecessary (for ProActive) lines of text at the top of the
-file. You may be able to do this with the following command in bash:</p>
+file. There are various ways one can remove these additional lines,
+however, a nice command-line solution is:)</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">grep</span> ^COMMONID metagenomeAnnots.gff <span class="op">&gt;</span> metagenomeAnnotsForProActive.gff</span></code></pre></div>
-<p>The ‘COMMONID’ should be a value that your contig or genome accession
-starts with that is the same across all the rows. For example, the
-‘COMMONID’ for the contig accessions in the sampleMetagenomegffTSV
+<p>The ‘COMMONID’ should be a value that your contig or genome
+accessions start with that is the same across all the rows. For example,
+the ‘COMMONID’ for the contig accessions in the sampleMetagenomegffTSV
 displayed above could be “NODE” since all the accessions start with
 “NODE”.</p>
 </div>
@@ -533,7 +530,7 @@ displayed above could be “NODE” since all the accessions start with
 <p><code><a href="../reference/ProActive.html">ProActive()</a></code> is the main function in the ProActive R
 package. This function filters contigs/chunks based on length and read
 coverage, performs pattern-matching to detect gaps and elevations in
-read coverage, identifies start and stop positions and sizes of
+read coverage, and identifies start and stop positions and sizes of
 pattern-matches.</p>
 <div class="section level3">
 <h3 id="function-components">Function components<a class="anchor" aria-label="anchor" href="#function-components"></a>
@@ -542,9 +539,7 @@ pattern-matches.</p>
 <h4 id="chunking">Chunking<a class="anchor" aria-label="anchor" href="#chunking"></a>
 </h4>
 <p>Currently, <code><a href="../reference/ProActive.html">ProActive()</a></code> can only detect one gap or
-elevation pattern per contig. While in many cases, contigs only have one
-read coverage pattern, the longer the contig is, the greater the chance
-that it has multiple patterns. Until <code><a href="../reference/ProActive.html">ProActive()</a></code> is able to
+elevation pattern per contig. Until <code><a href="../reference/ProActive.html">ProActive()</a></code> is able to
 detect multiple read coverage patterns per contig, we rely on ‘chunking’
 large contig into smaller subsets (defined by <code>chunkSize</code>) so
 that pattern-matching can be performed on each chunk as if it were an
@@ -554,7 +549,13 @@ contigs/genomes are chunked, they are assigned a sequential value to
 link chunks back together (i.e. “NODE_1_chunk_1, NODE_1_chunk_2,
 NODE_1_chunk_3, …). Note that the remaining ‘chunk’ of a contig/genome
 may not be long enough to perform pattern-matching on. Chunks too small
-for pattern-matching will get put in the output FilteredOut table.</p>
+for pattern-matching will be put in the output FilteredOut table. If a
+chunk splits a gap or elevation pattern in half,
+<code><a href="../reference/ProActive.html">ProActive()</a></code> will attempt to detect this and report it to
+the user as a ‘possible pattern-match continuity’ between contig/genome
+chunks. Pattern-match continuity is detected when two sequential chunks
+have a partial elevation/gap pattern going off the right and left side
+of the chunks, respectively.</p>
 </div>
 <div class="section level4">
 <h4 id="filtering">Filtering<a class="anchor" aria-label="anchor" href="#filtering"></a>
@@ -591,13 +592,13 @@ interfere with pattern-matching. We find that the default 1,000 bp
 and read coverage pattern resolution. If you’d like more resolution than
 the 1,000 bp <code>windowSize</code> provides, consider dropping the
 <code>windowSize</code> to 500. If you’d like fine scale read coverage
-resolution, consider viewing the contigs/genome with Integative Genomics
-Viewer <a href="https://github.com/igvteam/igv" class="external-link">IGV</a></p>
+resolution, consider viewing the contigs/genome with a software like
+Integrative Genomics Viewer <a href="https://github.com/igvteam/igv" class="external-link">IGV</a>.</p>
 </div>
 <div class="section level4">
 <h4 id="pattern-matching">Pattern-matching<a class="anchor" aria-label="anchor" href="#pattern-matching"></a>
 </h4>
-<p><code><a href="../reference/ProActive.html">ProActive()</a></code> detects read coverage patterns using a
+<p><code><a href="../reference/ProActive.html">ProActive()</a></code> detects read coverage patterns using a 2D
 pattern-matching algorithm. Several predefined patterns, described
 below, are built using the specific length and read coverage values of
 the contig/chunk being assessed. Patterns are translated across each
@@ -613,13 +614,8 @@ complete, the pattern associated with the best match-score is used for
 contig/chunk classification. Contigs/chunks are classified as
 ‘Elevation’, ‘Gap’, or ‘NoPattern’ during pattern-matching.</p>
 <div class="section level5">
-<h5 id="patterns">
-<strong>Patterns</strong><a class="anchor" aria-label="anchor" href="#patterns"></a>
+<h5 id="elevation-pattern">Elevation pattern:<a class="anchor" aria-label="anchor" href="#elevation-pattern"></a>
 </h5>
-<div class="section level6">
-<h6 id="elevation">
-<strong>Elevation:</strong><a class="anchor" aria-label="anchor" href="#elevation"></a>
-</h6>
 <p>The ‘elevation’ class is defined by a ‘block’ pattern which
 represents the read covarage pattern formed when reads from a highly
 active/abundant MGE map back to its respective integration site in the
@@ -630,20 +626,20 @@ across the contig/chunk. The block pattern width never get smaller than
 <code>minSize</code> parameter.</p>
 <p><img src="ProActiveVignette_files/figure-html/unnamed-chunk-7-1.png" width="50%"></p>
 </div>
-<div class="section level6">
-<h6 id="gap">Gap:<a class="anchor" aria-label="anchor" href="#gap"></a>
-</h6>
-<p>The ‘gap’ class is essentially the reverse of the ‘elevation’
-pattern. It is defined by a gapped block pattern which represents a
-depression in read coverage caused by genetic heterogeneity at a
-specific region leading to poor read mapping. The same pattern-matching
-steps (alteration of pattern and pattern translation) used for the
-elevation pattern are used for the gap pattern.</p>
+<div class="section level5">
+<h5 id="gap-pattern">Gap pattern:<a class="anchor" aria-label="anchor" href="#gap-pattern"></a>
+</h5>
+<p>The ‘gap’ class is essentially the reverse of the ‘elevation’ class.
+It is defined by a gapped block pattern which represents a depression in
+read coverage caused by genetic heterogeneity at a specific region
+leading to poor read mapping. The same pattern-matching steps
+(alteration of pattern and pattern translation) used for the elevation
+pattern are used for the gap pattern.</p>
 <p><img src="ProActiveVignette_files/figure-html/unnamed-chunk-8-1.png" width="50%"></p>
 </div>
-<div class="section level6">
-<h6 id="elevationsgaps">Elevations/Gaps:<a class="anchor" aria-label="anchor" href="#elevationsgaps"></a>
-</h6>
+<div class="section level5">
+<h5 id="elevationgap-pattern">Elevation/Gap pattern:<a class="anchor" aria-label="anchor" href="#elevationgap-pattern"></a>
+</h5>
 <p>Elevations and gaps that trail off one side of a contig/chunk are
 hard to classify as the read coverage could be seen as a gap or
 elevation depending on how you’re looking at it. Our solution to this
@@ -652,9 +648,9 @@ was greater than 50% of the length of the contig/chunk. Otherwise the
 classification is ‘elevated’.</p>
 <p><img src="ProActiveVignette_files/figure-html/unnamed-chunk-9-1.png" width="50%"></p>
 </div>
-<div class="section level6">
-<h6 id="nopattern">noPattern:<a class="anchor" aria-label="anchor" href="#nopattern"></a>
-</h6>
+<div class="section level5">
+<h5 id="nopattern">noPattern:<a class="anchor" aria-label="anchor" href="#nopattern"></a>
+</h5>
 <p>Since the best pattern-match for each contig/chunk is determined by
 comparing match-scores amongst all pattern-variations from all pattern
 classes, we needed a ‘negative control’ pattern to compare against. The
@@ -667,19 +663,30 @@ way.</p>
 <p><img src="ProActiveVignette_files/figure-html/unnamed-chunk-10-1.png" width="50%"></p>
 </div>
 </div>
+<div class="section level4">
+<h4 id="calculating-elevation-ratios">Calculating elevation ratios<a class="anchor" aria-label="anchor" href="#calculating-elevation-ratios"></a>
+</h4>
+<p>Every gap and elevation classification receives an elevation ratio
+which is simply the pattern-match’s maximum value divided by the minimum
+value. For elevation classifications, you can think of the elevation
+ratio as ‘the elevated region has X times greater read coverage than the
+non-elevated region’. Conversely, for gap classifications, the elevation
+ratio can be thought of as ‘the gapped region has X times less read
+coverage than the non-gapped region’.</p>
 </div>
 <div class="section level4">
 <h4 id="extracting-gene-annotations-in-elevatedgapped-regions">Extracting gene annotations in elevated/gapped regions<a class="anchor" aria-label="anchor" href="#extracting-gene-annotations-in-elevatedgapped-regions"></a>
 </h4>
 <p>If a .gff file is provided, then <code><a href="../reference/ProActive.html">ProActive()</a></code> will
-extract the gene predictions found within the gapped and elevated
+extract the gene annotations found within the gapped and elevated
 pattern-match regions and provide them to the user in an output table
-(ORFtable). An additional column will be added with the classification
-information (gap or elevation) associated with the gene predictions. If
-the input .gff file contains a gene ‘product’ field in the attributes
-column (9th column in the dataframe), then <code><a href="../reference/ProActive.html">ProActive()</a></code> will
-extract the product information into a separate column for easy
-visualization and filtering of annotations of interest.</p>
+(GeneAnnotTable). An additional column will be added with the
+classification information (gap or elevation) associated with the gene
+annotations. If the input .gff file contains a gene ‘product’ field in
+the attributes column (9th column in the dataframe), then
+<code><a href="../reference/ProActive.html">ProActive()</a></code> will extract the product information into a
+separate column for easy visualization and filtering of annotations of
+interest.</p>
 </div>
 </div>
 <div class="section level3">
@@ -700,7 +707,7 @@ visualization and filtering of annotations of interest.</p>
 <span><span class="co">#&gt; Summarizing pattern-matching results</span></span>
 <span><span class="co">#&gt; Finding gene predictions in elevated or gapped regions of read coverage...</span></span>
 <span><span class="co">#&gt; Finalizing output</span></span>
-<span><span class="co">#&gt; Execution time: 1.93secs</span></span>
+<span><span class="co">#&gt; Execution time: 1.91secs</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on low read coverage</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on length (&lt; minContigLength)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -721,7 +728,7 @@ visualization and filtering of annotations of interest.</p>
 <span><span class="co">#&gt; Summarizing pattern-matching results</span></span>
 <span><span class="co">#&gt; Finding gene predictions in elevated or gapped regions of read coverage...</span></span>
 <span><span class="co">#&gt; Finalizing output</span></span>
-<span><span class="co">#&gt; Execution time: 29.9secs</span></span>
+<span><span class="co">#&gt; Execution time: 29.41secs</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on low read coverage</span></span>
 <span><span class="co">#&gt; 0 contigs were filtered out based on length (&lt; minContigLength)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -744,6 +751,7 @@ file!</strong></p>
 <span>  chunkSize <span class="op">=</span> <span class="fl">50000</span>,</span>
 <span>  chunkContigs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  IncludeNoPatterns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">saveFilesTo</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <ul>
@@ -777,7 +785,7 @@ contig/chunk size (in bp) to perform pattern-matching on. Default is
 <code>chunkContigs</code>=TRUE, chunk the genome or contigs,
 respectively, into smaller subsets for pattern-matching.
 <code>chunkSize</code> determines the size (in bp) of each ‘chunk’.
-Default is 50000.</li>
+Default is 100000.</li>
 <li>
 <strong><code>chunkContigs</code></strong>: TRUE or FALSE, If TRUE
 and <code>mode</code>=“metagenome”, contigs longer than the
@@ -791,6 +799,9 @@ PatternMatches output list. If you would like to visualize the noPattern
 pattern-matches in <code><a href="../reference/plotProActiveResults.html">plotProActiveResults()</a></code>, this should be
 set to TRUE.</li>
 <li>
+<strong><code>verbose</code></strong>: TRUE or FALSE. Print progress
+messages to console. Default is TRUE.</li>
+<li>
 <strong><code>saveFilesTo</code></strong>: Optional, Provide a path
 to the directory you wish to save output to. A folder will be made
 within the provided directory to store results.</li>
@@ -799,7 +810,7 @@ within the provided directory to store results.</li>
 <div class="section level3">
 <h3 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
 </h3>
-<p>The output of <code>ProActive</code> is a list containing 6
+<p>The output of <code>ProActive</code> is a list containing six
 objects:</p>
 <ol style="list-style-type: decimal">
 <li>SummaryTable: A table containing all pattern-matching
@@ -815,8 +826,8 @@ visualize the pattern-matches in
 out for being too small or having too low read coverage</li>
 <li>Arguments: A list object containing arguments used for
 pattern-matching (windowSize, mode, chunkSize, chunkContigs)</li>
-<li>GenePredictTable: A table containing gene predictions associated
-with elevated or gapped regions in pattern-matches</li>
+<li>GeneAnnotTable: A table containing gene predictions associated with
+elevated or gapped regions in pattern-matches</li>
 </ol>
 <p>Save the desired list item to a new variable using its associated
 name.</p>
@@ -1008,10 +1019,10 @@ Gap
 1.609512
 </td>
 <td style="text-align:right;">
-282745.5
+83000
 </td>
 <td style="text-align:right;">
-299900.0
+100000
 </td>
 <td style="text-align:right;">
 17000
@@ -1031,10 +1042,10 @@ Elevation
 1.351684
 </td>
 <td style="text-align:right;">
-338345.5
+39000
 </td>
 <td style="text-align:right;">
-350454.5
+51000
 </td>
 <td style="text-align:right;">
 12000
@@ -1054,10 +1065,10 @@ Elevation
 1.343521
 </td>
 <td style="text-align:right;">
-691827.3
+92000
 </td>
 <td style="text-align:right;">
-699900.0
+100000
 </td>
 <td style="text-align:right;">
 8000
@@ -1077,10 +1088,10 @@ Elevation
 1.723227
 </td>
 <td style="text-align:right;">
-783754.5
+84000
 </td>
 <td style="text-align:right;">
-793845.5
+94000
 </td>
 <td style="text-align:right;">
 10000
@@ -1100,10 +1111,10 @@ Elevation
 1.887571
 </td>
 <td style="text-align:right;">
-963572.7
+64000
 </td>
 <td style="text-align:right;">
-999900.0
+100000
 </td>
 <td style="text-align:right;">
 36000
@@ -1123,10 +1134,10 @@ Elevation
 1.293144
 </td>
 <td style="text-align:right;">
-1133300.0
+34000
 </td>
 <td style="text-align:right;">
-1143390.9
+44000
 </td>
 <td style="text-align:right;">
 10000
@@ -1134,10 +1145,9 @@ Elevation
 </tr>
 </tbody>
 </table>
-<p><strong>Subset of GenePredictTable for metagenome
-results:</strong></p>
+<p><strong>Subset of GeneAnnotTable for metagenome results:</strong></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">MetagenomeResultsGenePredictTable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ProActiveOutputMetagenome</span><span class="op">$</span><span class="va">GenePredictTable</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">MetagenomeResultsGenePredictTable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ProActiveOutputMetagenome</span><span class="op">$</span><span class="va">GeneAnnotTable</span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1399,9 +1409,9 @@ Elevation
 </tr>
 </tbody>
 </table>
-<p><strong>Subset of GenePredictTable for genome results:</strong></p>
+<p><strong>Subset of GeneAnnotTable for genome results:</strong></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">GenomeResultsGenePredictTable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ProActiveOutputGenome</span><span class="op">$</span><span class="va">GenePredictTable</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">GenomeResultsGenePredictTable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ProActiveOutputGenome</span><span class="op">$</span><span class="va">GeneAnnotTable</span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -1693,7 +1703,7 @@ maximum values and the start and stop positions.</p>
 <p>By default, the read coverage is plotted for each contig/chunk
 classified as having a gap or elevation in read coverage. If you wish to
 see the read coverage for noPattern classifications, be sure to set
-<code>IncludeNoPatterns</code>=TRUE when running
+<code>IncludeNoPatterns = TRUE</code> when running
 <code><a href="../reference/ProActive.html">ProActive()</a></code>. The pattern-match associated with each
 classification is overlaid on the coverage plot.</p>
 </div>
@@ -1714,7 +1724,7 @@ classification is overlaid on the coverage plot.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Note</strong>- There is no need to set ‘genome’ or
 ‘metagenome’ mode. <code><a href="../reference/plotProActiveResults.html">plotProActiveResults()</a></code> will get this
-information from the output of <code><a href="../reference/ProActive.html">ProActive()</a></code>.</p>
+information from the <code><a href="../reference/ProActive.html">ProActive()</a></code> output.</p>
 </div>
 <div class="section level3">
 <h3 id="argumentsparameters-1">Arguments/parameters<a class="anchor" aria-label="anchor" href="#argumentsparameters-1"></a>
@@ -1722,7 +1732,7 @@ information from the output of <code><a href="../reference/ProActive.html">ProAc
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotProActiveResults.html">plotProActiveResults</a></span><span class="op">(</span><span class="va">pileup</span>,</span>
 <span>  <span class="va">ProActiveResults</span>,</span>
-<span>  elevFilter <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  <span class="va">elevFilter</span>,</span>
 <span>  <span class="va">saveFilesTo</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <ul>
@@ -1735,7 +1745,7 @@ sequencing read coverages averaged over 100 bp windows/bins.</li>
 <li>
 <strong><code>elevFilter</code></strong>: Optional, only plot
 results with pattern-matches that achieved an elevation ratio (max/min)
-greater than the specified values. Default is NA (i.e. no filter).</li>
+greater than the specified value. Default is no filter.</li>
 <li>
 <strong><code>saveFilesTo</code></strong>: Optional, Provide a path
 to the directory you wish to save output to. A folder will be made
@@ -1748,19 +1758,17 @@ within the provided directory to store results.</li>
 <p>The output of <code>plotProActiveResults</code> is a list of ggplot
 objects.</p>
 <div class="section level4">
-<h4 id="view-all-plots">
-<strong>View all plots:</strong><a class="anchor" aria-label="anchor" href="#view-all-plots"></a>
+<h4 id="view-select-metagenome-plots">View select metagenome plots<a class="anchor" aria-label="anchor" href="#view-select-metagenome-plots"></a>
 </h4>
-<p><strong>Metagenome plots:</strong></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MetagenomeResultsPlots</span></span></code></pre></div>
-<p><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-1.png" width="100%"><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-2.png" width="100%"><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-3.png" width="100%"><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-4.png" width="100%"><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-5.png" width="100%"><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-6.png" width="100%"></p>
+<p><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-1.png" width="100%"><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-2.png" width="100%"><img src="ProActiveVignette_files/figure-html/unnamed-chunk-25-3.png" width="100%"></p>
 </div>
 <div class="section level4">
-<h4 id="view-select-plots">
-<strong>View select plots:</strong><a class="anchor" aria-label="anchor" href="#view-select-plots"></a>
+<h4 id="view-select-genome-plots">View select genome plots<a class="anchor" aria-label="anchor" href="#view-select-genome-plots"></a>
 </h4>
-<p><strong>Genome plots:</strong></p>
+<p><strong>Notice the ‘chunk’ information in the plot
+titles</strong></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GenomeResultsPlots</span><span class="op">$</span><span class="va">NC_003197.2_chunk_36</span></span></code></pre></div>
 <p><img src="ProActiveVignette_files/figure-html/unnamed-chunk-26-1.png" width="100%"></p>
@@ -1796,8 +1804,8 @@ objects.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] dplyr_1.1.4          stringr_1.5.1        ggplot2_3.5.1       </span></span>
-<span><span class="co">#&gt; [4] kableExtra_1.4.0     ProActive_0.0.0.9000</span></span>
+<span><span class="co">#&gt; [1] dplyr_1.1.4      stringr_1.5.1    ggplot2_3.5.1    kableExtra_1.4.0</span></span>
+<span><span class="co">#&gt; [5] ProActive_0.0.1 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] gtable_0.3.6      jsonlite_1.8.9    compiler_4.4.2    tidyselect_1.2.1 </span></span>
@@ -1805,8 +1813,8 @@ objects.</p>
 <span><span class="co">#&gt;  [9] textshaping_0.4.1 yaml_2.3.10       fastmap_1.2.0     R6_2.5.1         </span></span>
 <span><span class="co">#&gt; [13] labeling_0.4.3    generics_0.1.3    knitr_1.49        tibble_3.2.1     </span></span>
 <span><span class="co">#&gt; [17] desc_1.4.3        munsell_0.5.1     svglite_2.1.3     bslib_0.8.0      </span></span>
-<span><span class="co">#&gt; [21] pillar_1.10.0     rlang_1.1.4       cachem_1.1.0      stringi_1.8.4    </span></span>
-<span><span class="co">#&gt; [25] xfun_0.49         fs_1.6.5          sass_0.4.9        viridisLite_0.4.2</span></span>
+<span><span class="co">#&gt; [21] pillar_1.10.1     rlang_1.1.4       cachem_1.1.0      stringi_1.8.4    </span></span>
+<span><span class="co">#&gt; [25] xfun_0.50         fs_1.6.5          sass_0.4.9        viridisLite_0.4.2</span></span>
 <span><span class="co">#&gt; [29] cli_3.6.3         withr_3.0.2       pkgdown_2.1.1     magrittr_2.0.3   </span></span>
 <span><span class="co">#&gt; [33] digest_0.6.37     grid_4.4.2        rstudioapi_0.17.1 lifecycle_1.0.4  </span></span>
 <span><span class="co">#&gt; [37] vctrs_0.6.5       evaluate_1.0.1    glue_1.8.0        farver_2.1.2     </span></span>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ProActive</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,16 +42,16 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">changewindowSize</span><span class="op">(</span><span class="va">pileup</span>, <span class="va">windowSize</span>, <span class="va">mode</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">changewindowSize</span><span class="op">(</span><span class="va">pileupSubset</span>, <span class="va">windowSize</span>, <span class="va">mode</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-pileup">pileup<a class="anchor" aria-label="anchor" href="#arg-pileup"></a></dt>
-<dd><p>A .txt file containing mapped sequencing read coverages averaged over
-100 bp windows/bins.</p></dd>
+<dl><dt id="arg-pileupsubset">pileupSubset<a class="anchor" aria-label="anchor" href="#arg-pileupsubset"></a></dt>
+<dd><p>A subset of the pileup that pertains only to the contig/chunk
+currently being assessed.</p></dd>
 
 
 <dt id="arg-windowsize">windowSize<a class="anchor" aria-label="anchor" href="#arg-windowsize"></a></dt>

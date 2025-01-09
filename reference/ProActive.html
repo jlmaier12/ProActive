@@ -25,7 +25,7 @@ the detected gaps and elevations in read coverage."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">ProActive</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,6 +80,7 @@ the detected gaps and elevations in read coverage.</p>
 <span>  minContigLength <span class="op">=</span> <span class="fl">30000</span>,</span>
 <span>  chunkSize <span class="op">=</span> <span class="fl">1e+05</span>,</span>
 <span>  IncludeNoPatterns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">saveFilesTo</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -130,13 +131,17 @@ on. Default is 25000.</p></dd>
 <dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
 chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
-`chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.</p></dd>
+`chunkSize` determines the size (in bp) of each 'chunk'. Default is 100000.</p></dd>
 
 
 <dt id="arg-includenopatterns">IncludeNoPatterns<a class="anchor" aria-label="anchor" href="#arg-includenopatterns"></a></dt>
 <dd><p>TRUE or FALSE, If TRUE the noPattern pattern-matches will
 be included in the ProActive PatternMatches output list. If you would like to visualize
 the noPattern pattern-matches in `plotProActiveResults()`, this should be set to TRUE.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>TRUE or FALSE. Print progress messages to console. Default is TRUE.</p></dd>
 
 
 <dt id="arg-savefilesto">saveFilesTo<a class="anchor" aria-label="anchor" href="#arg-savefilesto"></a></dt>
@@ -152,8 +157,7 @@ results.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Metagenome mode with gffTSV</span></span></span>
-<span class="r-in"><span><span class="va">metagenome_results</span> <span class="op">&lt;-</span> <span class="fu">ProActive</span><span class="op">(</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">metagenome_results</span> <span class="op">&lt;-</span> <span class="fu">ProActive</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  pileup <span class="op">=</span> <span class="va">sampleMetagenomePileup</span>,</span></span>
 <span class="r-in"><span>  mode <span class="op">=</span> <span class="st">"metagenome"</span>,</span></span>
 <span class="r-in"><span>  gffTSV <span class="op">=</span> <span class="va">sampleMetagenomegffTSV</span></span></span>
@@ -166,33 +170,12 @@ results.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Summarizing pattern-matching results</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finding gene predictions in elevated or gapped regions of read coverage...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finalizing output</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Execution time: 2.05secs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Execution time: 2.34secs</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0 contigs were filtered out based on low read coverage</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0 contigs were filtered out based on length (&lt; minContigLength)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Elevation       Gap NoPattern </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>         3         3         1 </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Genome mode without gffTSV</span></span></span>
-<span class="r-in"><span><span class="va">genome_results</span> <span class="op">&lt;-</span> <span class="fu">ProActive</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  pileup <span class="op">=</span> <span class="va">exampleGenomePileupSubset</span>,</span></span>
-<span class="r-in"><span>  mode <span class="op">=</span> <span class="st">"genome"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Preparing input file for pattern-matching...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Starting pattern-matching...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> A quarter of the way done with pattern-matching</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Half of the way done with pattern-matching</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Almost done with pattern-matching!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Summarizing pattern-matching results</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Finalizing output</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Execution time: 1.93secs</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0 contigs were filtered out based on low read coverage</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0 contigs were filtered out based on length (&lt; minContigLength)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Elevation       Gap NoPattern </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>         1         1         2 </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">##gffTSV is optional!</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -14,13 +14,10 @@
 <url><loc>https://jlmaier12.github.io/ProActive/reference/collectBestMatchInfo.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/contigChunks.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/elevOrGapClassif.html</loc></url>
-<url><loc>https://jlmaier12.github.io/ProActive/reference/exampleGenomePileupSubset.html</loc></url>
-<url><loc>https://jlmaier12.github.io/ProActive/reference/exampleGenomeSubsetResults.html</loc></url>
-<url><loc>https://jlmaier12.github.io/ProActive/reference/exampleGenomegffTSVSubset.html</loc></url>
-<url><loc>https://jlmaier12.github.io/ProActive/reference/examplePlotsGenomeSubset.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/fullElevGap.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/fullElevGapShrink.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/index.html</loc></url>
+<url><loc>https://jlmaier12.github.io/ProActive/reference/linkChunks.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/noPattern.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/partialElevGap.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/partialElevGapShrink.html</loc></url>
@@ -35,6 +32,5 @@
 <url><loc>https://jlmaier12.github.io/ProActive/reference/sampleMetagenomePileup.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/sampleMetagenomeResults.html</loc></url>
 <url><loc>https://jlmaier12.github.io/ProActive/reference/sampleMetagenomegffTSV.html</loc></url>
-<url><loc>https://jlmaier12.github.io/ProActive/reference/samplePlotsMetagenome.html</loc></url>
 </urlset>
 
