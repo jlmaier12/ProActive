@@ -32,13 +32,15 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter, saveFiles
   if (mode == "metagenome" & contigChunk == "TRUE") {
     pileup <- contigChunks(pileup, chunkSize)
   }
-  elevFilter <- ifelse(missing(elevFilter) == TRUE, NA, elevFilter)
+  elevFilter <- ifelse(missing(elevFilter), NA, elevFilter)
   plots <- lapply(seq_along(patternMatches), function(i) {
     refName <- patternMatches[[i]][[8]]
     matchInfo <- summaryTable[which(summaryTable[, 1] == refName), ]
     classification <- matchInfo[, 2]
-    elevRatio <- ifelse(classification == "NoPattern", "NA", round(matchInfo[, 3], digits = 3))
-    if (is.na(elevFilter) == FALSE & elevRatio < elevFilter) {return(NULL)}
+    elevRatio <- ifelse(classification == "NoPattern", 0, round(matchInfo[, 3], digits = 3))
+    if (is.na(elevFilter) == FALSE & elevRatio < elevFilter) {
+      return(NULL)
+    }
     pileupSubset <- pileup[which(pileup[, 1] == refName), ]
     pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
     patternMatch <- patternBuilder(pileupSubset, patternMatches[[i]])
@@ -68,15 +70,15 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter, saveFiles
     plot
   })
   plots <- (plots[!vapply(plots, is.null, logical(1))])
-  refNames <- vapply(seq_along(patternMatches), function(i) {
+  refNames <- sapply(seq_along(patternMatches), function(i) {
     refName <- patternMatches[[i]][[8]]
     matchInfo <- summaryTable[which(summaryTable[, 1] == refName), ]
     classification <- matchInfo[, 2]
-    elevRatio <- ifelse(classification == "NoPattern", "NA", round(matchInfo[, 3], digits = 3))
-    if (is.na(elevFilter) == FALSE & elevRatio < elevFilter) {return(NULL)}
+    elevRatio <- ifelse(classification == "NoPattern", 0, round(matchInfo[, 3], digits = 3))
+    if (is.na(elevFilter) == FALSE & elevRatio < elevFilter) {return(NA)}
     refName
-  }, character(1))
-  refNames <- (refNames[!vapply(refNames, is.null, logical(1))])
+  })
+  refNames <- (refNames[!vapply(refNames, is.na, logical(1))])
   names(plots) <- refNames
   if (missing(saveFilesTo) == FALSE) {
     ifelse(!dir.exists(paths = paste0(saveFilesTo, "\\ProActiveOutputPlots")),

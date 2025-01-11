@@ -1,7 +1,7 @@
 Package: ProActive
 Title: 
   Detect Elevations and Gaps in Mapped Sequencing Read Coverage
-Version: 0.0.1
+Version: 0.0.2
 Maintainer: Jessie Maier <jlmaier@ncsu.edu>
 Authors@R: 
   c(person(given = "Jessie",
@@ -14,11 +14,11 @@ Authors@R:
            role= c("aut", "ths"),
            comment = c(ORCID = "0000-0001-6904-0287")))
 Description: 
-  The `ProActive` R package automatically detects regions of gapped and elevated 
-  read coverage using a pattern-matching algorithm. `ProActive` can detect, characterize 
-  and visualize read coverage patterns in both genomes and metagenomes. Optionally, 
+  Automate the detection of gaps and elevations in mapped sequencing 
+  read coverage using a 2D pattern-matching algorithm. 'ProActive' detects, characterizes 
+  and visualizes read coverage patterns in both genomes and metagenomes. Optionally, 
   users may provide gene predictions associated with their genome or metagenome 
-  in the form of a .gff file. In this case, `ProActive` will generate an additional 
+  in the form of a .gff file. In this case, 'ProActive' will generate an additional 
   output table containing the gene predictions found within the detected regions of gapped 
   and elevated read coverage. 
 License: GPL-2
