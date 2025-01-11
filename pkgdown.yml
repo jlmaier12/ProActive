@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   ProActiveVignette: ProActiveVignette.html
-last_built: 2025-01-09T19:23Z
+last_built: 2025-01-11T15:58Z
 urls:
   reference: https://jlmaier12.github.io/ProActive/reference
   article: https://jlmaier12.github.io/ProActive/articles
