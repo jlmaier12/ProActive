@@ -45,7 +45,14 @@ of detected gapped or elevated read coverage.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">GPsInElevGaps</span><span class="op">(</span><span class="va">elevGapSummList</span>, <span class="va">windowSize</span>, <span class="va">gffTSV</span>, <span class="va">mode</span>, <span class="va">chunkContigs</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">GPsInElevGaps</span><span class="op">(</span></span>
+<span>  <span class="va">elevGapSummList</span>,</span>
+<span>  <span class="va">windowSize</span>,</span>
+<span>  <span class="va">gffTSV</span>,</span>
+<span>  <span class="va">mode</span>,</span>
+<span>  <span class="va">chunkContigs</span>,</span>
+<span>  <span class="va">chunkSize</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,6 +82,11 @@ file used to generate the pileup.</p></dd>
 <dd><p>TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
 than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
 will be performed on each subset. Default is FALSE.</p></dd>
+
+
+<dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
+<dd><p>If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
+chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.</p></dd>
 
 </dl></div>
 
