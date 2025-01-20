@@ -40,12 +40,12 @@
 #' @return A list containing 6 objects described in the function description.
 #' @export
 #' @examples
-#' metagenome_results <- ProActive(
+#' metagenome_results <- ProActiveDetect(
 #'   pileup = sampleMetagenomePileup,
 #'   mode = "metagenome",
 #'   gffTSV = sampleMetagenomegffTSV
 #' )
-ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FALSE,
+ProActiveDetect <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FALSE,
                       minSize = 10000, maxSize = Inf, minContigLength = 30000,
                       chunkSize = 100000, IncludeNoPatterns = FALSE, verbose = TRUE,
                       saveFilesTo) {
@@ -83,11 +83,11 @@ ProActive <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContigs = FA
   }
   filteredOutContigsDf <- patternMatchSummary[[2]]
   if(verbose){message("Summarizing pattern-matching results")}
-  summaryTable <- classifSumm(pileup, patternMatchSummary[[1]], windowSize, mode)
+  summaryTable <- classifSumm(pileup, patternMatchSummary[[1]], windowSize, mode, chunkSize)
   if (missing(gffTSV) == FALSE) {
     if(verbose){message("Finding gene predictions in elevated or gapped regions of read coverage...")}
     elevGapSummList <- removeNoPatterns(patternMatchSummary[[1]])
-    GPSummTable <- GPsInElevGaps(elevGapSummList, windowSize, gffTSV, mode, chunkContigs)
+    GPSummTable <- GPsInElevGaps(elevGapSummList, windowSize, gffTSV, mode, chunkContigs, chunkSize)
   }
   if(verbose){message("Finalizing output")}
   endTime <- Sys.time()

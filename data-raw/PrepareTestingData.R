@@ -6,11 +6,9 @@ library(ProActive)
 sampleGenomePileup <- read.delim("C:/Users/jlmaier/Desktop/ProActive/LT2_bincov100", header=FALSE, comment.char="#")
 sampleGenomegffTSV <- read.delim("C:/Users/jlmaier/Desktop/ProActive/LT2.gff", header=FALSE, comment.char="#")
 
-sampleGenomeResults <- ProActive(sampleGenomePileup, mode="genome", gffTSV = sampleGenomegffTSV)
+sampleGenomeResults <- ProActiveDetect(sampleGenomePileup, mode="genome", gffTSV = sampleGenomegffTSV)
 
-samplePlotsGenome <- plotProActiveResults(sampleGenomePileup, sampleGenomeResults)
-
-usethis::use_data(sampleGenomeResults, samplePlotsGenome, internal = TRUE, overwrite = TRUE)
+usethis::use_data(sampleGenomeResults, internal = TRUE, overwrite = TRUE)
 
 ## Metagenome
 M_spades <- read.delim("Q:/Shared drives/JessieMaier/Experiments/Transductomics/Data/Microbial_reads/M_spades.bincov100", header=FALSE, comment.char="#")
@@ -59,9 +57,6 @@ sampleMetagenomePileup <- rbind.data.frame(NODE_1911, NODE_1583, NODE_1884,
 sampleMetagenomegffTSV <- rbind.data.frame(NODE_1911ORFS, NODE_1583ORFS, NODE_1884ORFS,
                                            NODE_1255ORFS, NODE_368ORFS, NODE_617ORFS, NODE_1625ORFS)
 
-sampleMetagenomeResults <- ProActive(sampleMetagenomePileup, mode="metagenome", gffTSV = sampleMetagenomegffTSV)
-
-samplePlotsMetagenome <- plotProActiveResults(sampleMetagenomePileup, sampleMetagenomeResults)
+sampleMetagenomeResults <- ProActiveDetect(sampleMetagenomePileup, mode="metagenome", gffTSV = sampleMetagenomegffTSV)
 
 usethis::use_data(sampleMetagenomeResults, overwrite = TRUE)
-usethis::use_data(samplePlotsMetagenome, internal = TRUE, overwrite = TRUE)

@@ -39,7 +39,6 @@ contigChunks <- function(pileup, chunkSize) {
         refNameChunk[c(remainIdx:nrow(pileupSubset))] <- rep(paste0(refName, "_chunk_", Z + 1), nrow(contigChunk))
       }
       chunkedPileupSubset <- cbind.data.frame(refNameChunk, pileupSubset$coverage, pileupSubset$position)
-      colnames(chunkedPileupSubset) <- c("refName", "coverage", "position")
       NAIdx <- which(is.na(chunkedPileup[, 1]))[[1]]
       chunkedPileup[c(NAIdx:(NAIdx + nrow(pileupSubset) - 1)), ] <- chunkedPileupSubset
     } else {
@@ -47,6 +46,7 @@ contigChunks <- function(pileup, chunkSize) {
       chunkedPileup[c(NAIdx:(NAIdx + nrow(pileupSubset) - 1)), ] <- pileupSubset
     }
   }
+  colnames(chunkedPileup) <- c("refName", "coverage", "position")
   return(chunkedPileup)
 }
 

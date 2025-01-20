@@ -19,7 +19,7 @@
 #' @keywords internal
 patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContigLength, verbose) {
   refNames <- unique(pileup[, 1])
-  bestMatchList <- list()
+  bestMatchList <- vector(mode='list', length=length(refNames))
   filteredOutContigs <- rep(NA, length(refNames))
   reason <- rep(NA, length(refNames))
   A <- 1
@@ -41,12 +41,12 @@ patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContig
     }
     pileupSubset <- pileup[which(pileup[, 1] == refName), ]
     if ((nrow(pileupSubset) * 100) < minContigLength) {
-      filteredOutContigs[C] <<- refName
+      filteredOutContigs[C] <- refName
       reason[C] <- "Too Short"
       C <- C + 1
       next
     } else if (pileupSubset[(order(pileupSubset[, 2], decreasing = TRUE))[50], 2] <= 10) {
-      filteredOutContigs[C] <<- refName
+      filteredOutContigs[C] <- refName
       reason[C] <- "Low read cov"
       C <- C + 1
       next
@@ -74,6 +74,7 @@ patternMatcher <- function(pileup, windowSize, minSize, maxSize, mode, minContig
     bestMatchList[[A]] <- c(bestMatch, refName)
     A <- A + 1
   }
+  bestMatchList <- (bestMatchList[!vapply(bestMatchList, is.null, logical(1))])
   filteredOutContigsdf <- na.omit(cbind.data.frame(filteredOutContigs, reason))
   patternMatchingSumm <- list(bestMatchList, filteredOutContigsdf)
   return(patternMatchingSumm)

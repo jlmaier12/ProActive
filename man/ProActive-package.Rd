@@ -2,21 +2,27 @@
 % Please edit documentation in R/ProActive-package.R
 \docType{package}
 \name{ProActive-package}
+\alias{ProActive}
 \alias{ProActive-package}
 \title{\bold{ProActive}}
 \description{
-Automatic detection of gaps and elevations in mapped sequencing reads using read coverage
-  pattern-matching. Pattern-matching results are summarized into a dataframe and users can visualize the
-  pattern-matches and associated read coverage patterns. If a .gff file is supplied, ProActive will output
-  the ORFs found within the detected regions of elevated and/or gapped read coverage. ProActive works with both
-  metagenomes and genomes.
+`ProActive` automatically detects regions of gapped and elevated read coverage
+using a 2D pattern-matching algorithm. `ProActive` detects, characterizes and
+visualizes read coverage patterns in both genomes and metagenomes. Optionally,
+users may provide gene annotations associated with their genome or metagenome
+in the form of a .gff file. In this case, `ProActive` will generate an additional
+output table containing the gene annotations found within the detected regions of
+gapped and elevated read coverage. Additionally, users can search for gene
+annotations of interest in the output read coverage plots.
 }
 \details{
-The two main functions in ProActive are:
+The three main functions in `ProActive` are:
 \enumerate{
-\item \code{\link{ProActive}} performs the pattern-matching and characterization of read coverage patterns.
+\item \code{\link{ProActiveDetect}} performs the pattern-matching and characterization of read coverage patterns.
 \item \code{\link{plotProActiveResults}} plots the results from
- \code{ProActive()}
+ \code{ProActiveDetect()}
+\item \code{\link{geneAnnotationSearch}} searches classified contigs/chunks for gene annotations that match
+user-provided keywords.
 }
 }
 \seealso{

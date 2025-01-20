@@ -4,7 +4,14 @@
 \alias{GPsInElevGaps}
 \title{Detect gene predictions in elevations and gaps}
 \usage{
-GPsInElevGaps(elevGapSummList, windowSize, gffTSV, mode, chunkContigs)
+GPsInElevGaps(
+  elevGapSummList,
+  windowSize,
+  gffTSV,
+  mode,
+  chunkContigs,
+  chunkSize
+)
 }
 \arguments{
 \item{elevGapSummList}{A list containing pattern-match information associated with all
@@ -21,6 +28,9 @@ file used to generate the pileup.}
 \item{chunkContigs}{TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
 than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
 will be performed on each subset. Default is FALSE.}
+
+\item{chunkSize}{If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
+chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.}
 }
 \description{
 Extracts subsets of the gffTSV associated with gene predictions that fall within regions

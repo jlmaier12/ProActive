@@ -29,7 +29,7 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter, saveFiles
   if (mode == "genome") {
     pileup <- genomeChunks(pileup, chunkSize)
   }
-  if (mode == "metagenome" & contigChunk == "TRUE") {
+  if (mode == "metagenome" & contigChunk == TRUE) {
     pileup <- contigChunks(pileup, chunkSize)
   }
   elevFilter <- ifelse(missing(elevFilter), NA, elevFilter)
@@ -51,6 +51,7 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter, saveFiles
       labs(title = paste(refName, classification),
            subtitle = paste("Matching-region size (bp):", matchLength, "Elevation ratio:", elevRatio),
            x = "Base pair (bp) position") +
+      scale_x_continuous(expand = c(0, 0)) +
       theme(
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -62,7 +63,7 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter, saveFiles
         plot.title = element_text(size = 14),
         plot.margin = margin(
           t = 0,
-          r = 6,
+          r = 10,
           b = 0,
           l = 2
         )

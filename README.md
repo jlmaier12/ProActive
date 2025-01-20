@@ -6,40 +6,51 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-**The `ProActive` R package automatically detects regions of gapped and
-elevated read coverage using a pattern-matching algorithm. `ProActive`
-can detect, characterize and visualize read coverage patterns in both
-genomes and metagenomes. Optionally, users may provide gene predictions
-associated with their genome or metagenome in the form of a .gff file.
-In this case, `ProActive` will generate an additional output table
-containing the gene predictions found within the detected regions of
-gapped and elevated read coverage. `ProActive` is best used as a
-screening method to identify genetic regions for further
-investigation.**
+**`ProActive` automatically detects regions of gapped and elevated read
+coverage using a 2D pattern-matching algorithm. `ProActive` detects,
+characterizes and visualizes read coverage patterns in both genomes and
+metagenomes. Optionally, users may provide gene annotations associated
+with their genome or metagenome in the form of a .gff file. In this
+case, `ProActive` will generate an additional output table containing
+the gene annotations found within the detected regions of gapped and
+elevated read coverage. Additionally, users can search for gene
+annotations of interest in the output read coverage plots.**
 
-Elevations or gaps in read coverage can be caused by differential
-abundance of specific genetic elements. For example, an elevation in
-read coverage may be caused by prophage activation. When a prophage
-activates and enters the lytic cycle, its genome begins replicating and
-the ratio of phage:bacterial genomes in the cell begins to increase.
-Because there are more phage genomes than bacterial genomes, during
-sequencing more phage reads are generated than bacterial. When these
-reads are mapped back to their associated reference sequence, the read
-coverage of the prophage region will be elevated in comparison to the
-read coverage of the bacterial genome on either side of the prophage.
-This same principle applies to temperate phage who are highly abundant
-in the environment as well as other mobile genetic elements that are
-freely present in the environment at a higher ratio than the originating
-or ‘host’ genome.
+Visualizing read coverage data is important because gaps and elevations
+in coverage can be indicators of a variety of biological and
+non-biological scenarios, for example-
 
-Conversely, a gap in read coverage may indicate genetic heterogeneity in
-the associated bacterial population. Genetic variants with and without
-specific genetic elements, like prophage or certain genes, will produce
-differential abundances of sequencing reads that may form read coverage
-gaps. The formation of read coverage gaps due to genetic variants is
-dependent on the assembly (i.e. if the assembler assembles the genetic
-variants as separate entities or not). Gaps in read coverage may also
-form at regions with high mutation rates.
+- Elevations and gaps in read coverage may be caused by some types of
+  structural variants. Deletions can cause gaps while duplications can
+  cause elevations in read coverage \[1\].
+- Highly active and/or abundant mobile genetic elements, like
+  transposable elements \[2\] and prophage \[3\] for example, can create
+  elevations in read coverage at their respective integration sites.
+- Genetic regions with high mutation rates and/or high variability
+  within the population can generate gaps in read coverage \[4\].
+- Poor quality sequencing reads and chimeric reference sequences may
+  cause gaps and elevations in read coverage.
+
+**Since the cause for gaps and elevations in read coverage can be
+ambiguous, ProActive is best used as a screening method to identify
+genetic regions for further investigation with other tools!**
+
+**References:**
+
+1.  Tattini L., D’Aurizio R., & Magi A. (2015). Detection of Genomic
+    Structural Variants from Next-Generation Sequencing Data. Frontiers
+    in bioengineering and biotechnology, 3, 92.
+    <https://doi.org/10.3389/fbioe.2015.00092>
+2.  Kleiner M., Bushnell B., Sanderson K.E. et al. (2020)
+    Transductomics: sequencing-based detection and analysis of
+    transduced DNA in pure cultures and microbial communities.
+    Microbiome 8, 158. <https://doi.org/10.1186/s40168-020-00935-5>
+3.  Kieft K., Anantharaman K. (2022). Deciphering Active Prophages from
+    Metagenomes. mSystems 7:e00084-22.
+    <https://doi.org/10.1128/msystems.00084-22>
+4.  Fogarty E., Moore R. (2019). Visualizing contig coverages to better
+    understand microbial population structure.
+    <https://merenlab.org/2019/11/25/visualizing-coverages/>
 
 ### Input files
 
@@ -105,12 +116,13 @@ library(ProActive)
 
 ## Quick start
 
-Metagenome mode:
-
 ``` r
 library(ProActive)
 
-MetagenomeProActive <- ProActive(
+
+## Metagenome mode
+
+MetagenomeProActive <- ProActiveDetect(
   pileup = sampleMetagenomePileup,
   mode = "metagenome",
   gffTSV = sampleMetagenomegffTSV
@@ -123,7 +135,7 @@ MetagenomeProActive <- ProActive(
 #> Summarizing pattern-matching results
 #> Finding gene predictions in elevated or gapped regions of read coverage...
 #> Finalizing output
-#> Execution time: 1.98secs
+#> Execution time: 2.03secs
 #> 0 contigs were filtered out based on low read coverage
 #> 0 contigs were filtered out based on length (< minContigLength)
 #> 
@@ -132,12 +144,21 @@ MetagenomeProActive <- ProActive(
 
 MetagenomePlots <- plotProActiveResults(pileup = sampleMetagenomePileup,
                                         ProActiveResults = MetagenomeProActive)
-```
 
-Genome mode:
+MetagenomeGeneMatches <- geneAnnotationSearch(ProActiveResults = MetagenomeProActive, 
+                                              pileup = sampleMetagenomePileup, 
+                                              gffTSV = sampleMetagenomegffTSV,
+                                              geneOrProduct = "product",
+                                              keyWords = c("transport", "chemotaxis"))
+#> Cleaning gff file...
+#> Cleaning pileup file...
+#> Searching for matching annotations...
+#> 3 contigs/chunks have gene annotations that match one or more of the provided keyWords
 
-``` r
-GenomeProActive <- ProActive(
+
+## Genome mode
+
+GenomeProActive <- ProActiveDetect(
   pileup = sampleGenomePileup,
   mode = "genome",
   gffTSV = sampleGenomegffTSV
@@ -150,7 +171,7 @@ GenomeProActive <- ProActive(
 #> Summarizing pattern-matching results
 #> Finding gene predictions in elevated or gapped regions of read coverage...
 #> Finalizing output
-#> Execution time: 36.98secs
+#> Execution time: 29.76secs
 #> 0 contigs were filtered out based on low read coverage
 #> 0 contigs were filtered out based on length (< minContigLength)
 #> 
@@ -159,4 +180,16 @@ GenomeProActive <- ProActive(
 
 GenomePlots <- plotProActiveResults(pileup = sampleGenomePileup,
                                     ProActiveResults = GenomeProActive)
+
+GenomeGeneMatches <- geneAnnotationSearch(ProActiveResults = GenomeProActive, 
+                                          pileup = sampleGenomePileup, 
+                                          gffTSV = sampleGenomegffTSV,
+                                          geneOrProduct = "product",
+                                          keyWords = c("ribosomal"), 
+                                          inGapOrElev = TRUE,
+                                          bpRange = 5000)
+#> Cleaning gff file...
+#> Cleaning pileup file...
+#> Searching for matching annotations...
+#> 8 contigs/chunks have gene annotations that match one or more of the provided keyWords
 ```

@@ -1,6 +1,6 @@
 test_that("ProActive works on metagenomes with defualts", {
   ##metagenome
-  ProActiveTestMetagenome <- ProActive(sampleMetagenomePileup,
+  ProActiveTestMetagenome <- ProActiveDetect(sampleMetagenomePileup,
                                        mode="metagenome",
                                        gffTSV = sampleMetagenomegffTSV)
   expect_equal(ProActiveTestMetagenome, sampleMetagenomeResults)
@@ -8,7 +8,7 @@ test_that("ProActive works on metagenomes with defualts", {
 
 test_that("ProActive works on genomes with defualts", {
   ##genome
-  ProActiveTestGenome <- ProActive(sampleGenomePileup,
+  ProActiveTestGenome <- ProActiveDetect(sampleGenomePileup,
                                    mode="genome",
                                    gffTSV = sampleGenomegffTSV)
   expect_equal(ProActiveTestGenome, sampleGenomeResults)
