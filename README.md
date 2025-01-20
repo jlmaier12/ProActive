@@ -47,7 +47,7 @@ genetic regions for further investigation with other tools!**
     Microbiome 8, 158. <https://doi.org/10.1186/s40168-020-00935-5>
 3.  Kieft K., Anantharaman K. (2022). Deciphering Active Prophages from
     Metagenomes. mSystems 7:e00084-22.
-    <https://doi.org/10.1128/msystems.00084-22>
+    https://doi.org/10.1128/msystems.00084-22
 4.  Fogarty E., Moore R. (2019). Visualizing contig coverages to better
     understand microbial population structure.
     <https://merenlab.org/2019/11/25/visualizing-coverages/>
@@ -135,7 +135,7 @@ MetagenomeProActive <- ProActiveDetect(
 #> Summarizing pattern-matching results
 #> Finding gene predictions in elevated or gapped regions of read coverage...
 #> Finalizing output
-#> Execution time: 2.03secs
+#> Execution time: 2.09secs
 #> 0 contigs were filtered out based on low read coverage
 #> 0 contigs were filtered out based on length (< minContigLength)
 #> 
@@ -171,7 +171,7 @@ GenomeProActive <- ProActiveDetect(
 #> Summarizing pattern-matching results
 #> Finding gene predictions in elevated or gapped regions of read coverage...
 #> Finalizing output
-#> Execution time: 29.76secs
+#> Execution time: 29.7secs
 #> 0 contigs were filtered out based on low read coverage
 #> 0 contigs were filtered out based on length (< minContigLength)
 #> 
