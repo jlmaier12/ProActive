@@ -1,3 +1,5 @@
+# ProActive (development version)
+
 # Changes in 0.1.0
 + Changed name of `ProActive()` to `ProActiveDetect()`
 + Added ability to search read coverage plots for gene annotations of 

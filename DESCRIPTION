@@ -1,7 +1,7 @@
 Package: ProActive
 Title: 
   Detect Elevations and Gaps in Mapped Sequencing Read Coverage
-Version: 0.1.0
+Version: 0.1.0.9000
 Maintainer: Jessie Maier <jlmaier@ncsu.edu>
 Authors@R: 
   c(person(given = "Jessie",
