@@ -12,11 +12,15 @@
 #' @param elevRatio The maximum/minimum values of the pattern-match
 #' @param pattern The pattern-match information associated with the contig/chunk being assessed
 #' @param windowSize The number of basepairs to average read coverage values over.
+#' @param chunkSize If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
+#' chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
+#' `chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.
+#' @param mode Either "genome" or "metagenome"
 #' @keywords internal
 #' @importFrom stringr str_which
 geneAnnotationPlot <- function(geneAnnotSubset, keywords, pileupSubset,
                                colIdx, startbpRange, endbpRange, elevRatio,
-                               pattern, windowSize, chunkSize, mode){
+                               pattern, windowSize, chunkSize, mode, contigChunk){
   position <- coverage <- start <- NULL
   classification <- pattern[[7]]
   refName <- pileupSubset[1, 1]
@@ -24,7 +28,11 @@ geneAnnotationPlot <- function(geneAnnotSubset, keywords, pileupSubset,
     chunkNumber <- as.numeric(str_extract(refName, "(?<=\\_)\\d+$")) - 1
     startPos <- (pattern[[4]] * windowSize) + (chunkNumber * chunkSize)
     endPos <- (pattern[[5]] * windowSize) + (chunkNumber * chunkSize)
-  } else {
+  } else if (grepl("chunk", refName, fixed = TRUE)){
+    chunkNumber <- as.numeric(str_extract(refName, "(?<=\\_)\\d+$")) - 1
+    startPos <- (pattern[[4]] * windowSize) + (chunkNumber * chunkSize)
+    endPos <- (pattern[[5]] * windowSize) + (chunkNumber * chunkSize)
+  }else {
     startPos <- pattern[[4]] * windowSize
     endPos <- pattern[[5]] * windowSize
   }

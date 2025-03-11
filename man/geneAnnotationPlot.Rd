@@ -15,7 +15,8 @@ geneAnnotationPlot(
   pattern,
   windowSize,
   chunkSize,
-  mode
+  mode,
+  contigChunk
 )
 }
 \arguments{
@@ -36,6 +37,12 @@ geneAnnotationPlot(
 \item{pattern}{The pattern-match information associated with the contig/chunk being assessed}
 
 \item{windowSize}{The number of basepairs to average read coverage values over.}
+
+\item{chunkSize}{If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
+chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
+`chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.}
+
+\item{mode}{Either "genome" or "metagenome"}
 }
 \description{
 Plot read coverage and location of gene annotations that match the keywords and

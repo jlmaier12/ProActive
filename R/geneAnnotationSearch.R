@@ -89,7 +89,12 @@ geneAnnotationSearch <- function(ProActiveResults, pileup, gffTSV,
                          chunkNumber <- as.numeric(str_extract(trueRefName, "(?<=\\_)\\d+$")) - 1
                          startPos <- (patternMatches[[i]][[4]] * windowSize) + (chunkNumber * chunkSize)
                          endPos <- (patternMatches[[i]][[5]] * windowSize) + (chunkNumber * chunkSize)
-                       } else {
+                       } else if(grepl("chunk", trueRefName, fixed = TRUE)){
+                         chunkNumber <- as.numeric(str_extract(trueRefName, "(?<=\\_)\\d+$")) - 1
+                         startPos <- (patternMatches[[i]][[4]] * windowSize) + (chunkNumber * chunkSize)
+                         endPos <- (patternMatches[[i]][[5]] * windowSize) + (chunkNumber * chunkSize)
+                       }
+                         else {
                         startPos <- patternMatches[[i]][[4]] * windowSize
                         endPos <- patternMatches[[i]][[5]] * windowSize
                       }
@@ -104,7 +109,7 @@ geneAnnotationSearch <- function(ProActiveResults, pileup, gffTSV,
                     }
                     plot <- geneAnnotationPlot(geneAnnotSubset, keyWords,
                                                  pileupSubset, colIdx, startbpRange, endbpRange,
-                                                 elevRatio, patternMatches[[i]], windowSize, chunkSize, mode)
+                                                 elevRatio, patternMatches[[i]], windowSize, chunkSize, mode, contigChunk)
                   } else {return(NULL)}
     plot
   })
