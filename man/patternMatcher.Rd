@@ -11,6 +11,7 @@ patternMatcher(
   maxSize,
   mode,
   minContigLength,
+  chunkContigs,
   verbose
 )
 }
@@ -29,6 +30,10 @@ patternMatcher(
 
 \item{minContigLength}{The minimum contig/chunk size (in bp) to perform pattern-matching
 on. Default is 25000.}
+
+\item{chunkContigs}{TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+will be performed on each subset. Default is FALSE.}
 
 \item{verbose}{TRUE or FALSE. Print progress messages to console. Default is TRUE.}
 }

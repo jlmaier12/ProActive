@@ -75,7 +75,7 @@ ProActiveDetect <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContig
     pileup <- contigChunks(pileup, chunkSize)
   }
   if(verbose){message("Starting pattern-matching...")}
-  patternMatchSummary <- patternMatcher(pileup, windowSize, minSize, maxSize, mode, minContigLength, verbose)
+  patternMatchSummary <- patternMatcher(pileup, windowSize, minSize, maxSize, mode, minContigLength, chunkContigs, verbose)
   if (IncludeNoPatterns) {
     classifList <- patternMatchSummary[[1]]
   } else {
@@ -83,7 +83,7 @@ ProActiveDetect <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContig
   }
   filteredOutContigsDf <- patternMatchSummary[[2]]
   if(verbose){message("Summarizing pattern-matching results")}
-  summaryTable <- classifSumm(pileup, patternMatchSummary[[1]], windowSize, mode, chunkSize)
+  summaryTable <- classifSumm(pileup, patternMatchSummary[[1]], windowSize, mode, chunkContigs, chunkSize)
   if (missing(gffTSV) == FALSE) {
     if(verbose){message("Finding gene predictions in elevated or gapped regions of read coverage...")}
     elevGapSummList <- removeNoPatterns(patternMatchSummary[[1]])
@@ -116,7 +116,7 @@ ProActiveDetect <- function(pileup, mode, gffTSV, windowSize = 1000, chunkContig
   table <- (table(summaryTable[, 2]))
   if(verbose){message(paste0(capture.output(table), collapse = "\n"))}
   if(mode == "genome" || (mode == "metagenome" & chunkContigs == TRUE)){
-    linkChunks(classifList, pileup, windowSize, mode, verbose)
+    linkChunks(classifList, pileup, windowSize, mode, chunkContigs, verbose)
   }
   if (missing(saveFilesTo) == FALSE) {
     ifelse(!dir.exists(paths = paste0(saveFilesTo, "\\ProActiveOutput")),

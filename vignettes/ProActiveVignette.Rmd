@@ -691,6 +691,13 @@ GenomeGeneMatches$NC_003197.2_chunk_3
 GenomeGeneMatches$NC_003197.2_chunk_36
 ```
 
+# Supplemental information
+
+## Funding
+The development of TrIdent was supported by a seed grant from the North 
+Carolina State University Data Science Academy and by the National Institutes 
+of Health under Award Numbers R35GM138362 and R01Al171046.
+
 # Session Information
 ```{r}
 sessionInfo()

@@ -6,9 +6,12 @@
 #'  currently being assessed.
 #' @param windowSize The number of basepairs to average read coverage values over.
 #' Options are 100, 200, 500, 1000 ONLY. Default is 1000.
+#' @param chunkContigs TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+#' than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+#' will be performed on each subset. Default is FALSE.
 #' @param mode Either "genome" or "metagenome"
 #' @keywords internal
-changewindowSize <- function(pileupSubset, windowSize, mode) {
+changewindowSize <- function(pileupSubset, windowSize, chunkContigs, mode) {
   coverage <- vector()
   X <- 0
   Y <- windowSize / 100
@@ -18,7 +21,7 @@ changewindowSize <- function(pileupSubset, windowSize, mode) {
     Y <- Y + (windowSize / 100)
     if (Y > nrow(pileupSubset)) break
   }
-  if (mode == "genome") {
+  if (mode == "genome" || chunkContigs == TRUE) {
     position <- seq(pileupSubset[1, 3], pileupSubset[nrow(pileupSubset), 3], length.out = length(coverage))
   } else {
     position <- seq(windowSize, length(coverage) * windowSize, windowSize)

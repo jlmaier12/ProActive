@@ -4,7 +4,7 @@
 \alias{linkChunks}
 \title{Link pattern-matches on contig/genome chunks}
 \usage{
-linkChunks(bestMatchList, pileup, windowSize, mode, verbose)
+linkChunks(bestMatchList, pileup, windowSize, mode, chunkContigs, verbose)
 }
 \arguments{
 \item{bestMatchList}{A list containing pattern-match information associated with
@@ -16,6 +16,10 @@ all contigs/chunks classified by `ProActive()` pattern-matching}
 \item{windowSize}{The number of basepairs to average read coverage values over.}
 
 \item{mode}{Either "genome" or "metagenome"}
+
+\item{chunkContigs}{TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+will be performed on each subset. Default is FALSE.}
 
 \item{verbose}{TRUE or FALSE. Print progress messages to console. Default is TRUE.}
 }

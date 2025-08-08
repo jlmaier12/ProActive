@@ -42,7 +42,7 @@ plotProActiveResults <- function(pileup, ProActiveResults, elevFilter, saveFiles
       return(NULL)
     }
     pileupSubset <- pileup[which(pileup[, 1] == refName), ]
-    pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
+    pileupSubset <- changewindowSize(pileupSubset, windowSize, contigChunk, mode)
     patternMatch <- patternBuilder(pileupSubset, patternMatches[[i]])
     matchLength <- matchInfo[, 6]
     plot <- ggplot(data = patternMatch, aes(x = position, y = coverage)) +

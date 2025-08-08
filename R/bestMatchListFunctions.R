@@ -10,9 +10,12 @@
 #' Options are 100, 200, 500, 1000 ONLY. Default is 1000.
 #' @param chunkSize If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
 #' chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
+#' @param chunkContigs TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+#' than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+#' will be performed on each subset. Default is FALSE.
 #' @param mode Either "genome" or "metagenome"
 #' @keywords internal
-classifSumm <- function(pileup, bestMatchList, windowSize, mode, chunkSize) {
+classifSumm <- function(pileup, bestMatchList, windowSize, mode, chunkContigs, chunkSize) {
   if (length(bestMatchList) == 0) {
     stop("No pattern-matches detected")
   }
@@ -34,7 +37,7 @@ classifSumm <- function(pileup, bestMatchList, windowSize, mode, chunkSize) {
   classification <- vapply(seq_along(bestMatchList), function(i) {bestMatchList[[i]][[7]]}, character(1))
   matchSize <- vapply(seq_along(bestMatchList), function(i) {
     pileupSubset <- pileup[which(pileup[, 1] == bestMatchList[[i]][[8]]), ]
-    pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
+    pileupSubset <- changewindowSize(pileupSubset, windowSize, chunkContigs, mode)
     (length(seq(pileupSubset[bestMatchList[[i]][[4]], 3], pileupSubset[bestMatchList[[i]][[5]], 3], windowSize)) - 1) * windowSize},
     numeric(1))
   classifSummTable <- cbind.data.frame(refName, classification, elevRatio, startPos, endPos, matchSize)

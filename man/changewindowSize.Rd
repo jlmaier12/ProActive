@@ -4,7 +4,7 @@
 \alias{changewindowSize}
 \title{Change the pileup window size}
 \usage{
-changewindowSize(pileupSubset, windowSize, mode)
+changewindowSize(pileupSubset, windowSize, chunkContigs, mode)
 }
 \arguments{
 \item{pileupSubset}{A subset of the pileup that pertains only to the contig/chunk
@@ -12,6 +12,10 @@ currently being assessed.}
 
 \item{windowSize}{The number of basepairs to average read coverage values over.
 Options are 100, 200, 500, 1000 ONLY. Default is 1000.}
+
+\item{chunkContigs}{TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+will be performed on each subset. Default is FALSE.}
 
 \item{mode}{Either "genome" or "metagenome"}
 }

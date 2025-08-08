@@ -58,7 +58,7 @@ contigChunks <- function(pileup, chunkSize) {
 #' 100 bp windows/bins.
 #' @param chunkSize If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
 #' chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
-#' `chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.
+#' `chunkSize` determines the size (in bp) of each 'chunk'. Default is 100000.
 #' @keywords internal
 genomeChunks <- function(pileup, chunkSize) {
   refName <- rep(NA, nrow(pileup))
@@ -99,10 +99,13 @@ genomeChunks <- function(pileup, chunkSize) {
 #' 100 bp windows/bins.
 #' @param windowSize The number of basepairs to average read coverage values over.
 #' @param mode Either "genome" or "metagenome"
+#' @param chunkContigs TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+#' than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+#' will be performed on each subset. Default is FALSE.
 #' @param verbose TRUE or FALSE. Print progress messages to console. Default is TRUE.
 #' @importFrom stringr str_extract
 #' @keywords internal
-linkChunks <- function(bestMatchList, pileup, windowSize, mode, verbose){
+linkChunks <- function(bestMatchList, pileup, windowSize, mode, chunkContigs, verbose){
   potLink <- rep(NA, length(bestMatchList))
   refNames <- vapply(seq_along(bestMatchList), function(i){bestMatchList[[i]][[8]]}, character(1))
   classifVector <- vapply(seq_along(bestMatchList), function(i){
@@ -111,7 +114,7 @@ linkChunks <- function(bestMatchList, pileup, windowSize, mode, verbose){
     startPos <- bestMatchList[[i]][[4]]
     endPos <- bestMatchList[[i]][[5]]
     pileupSubset <- pileup[which(pileup[, 1] == refName), ]
-    pileupSubset <- changewindowSize(pileupSubset, windowSize, mode)
+    pileupSubset <- changewindowSize(pileupSubset, windowSize, chunkContigs, mode)
     if(grepl("chunk", refName) == FALSE) {
       "NoChunk"
     } else if(classification == "NoPattern") {
@@ -140,7 +143,7 @@ linkChunks <- function(bestMatchList, pileup, windowSize, mode, verbose){
         classifDf[rightIdx,3] <- "no"
       }
     }
-    if(verbose == TRUE){
+    if(verbose){
       if("link" %in% classifDf[,3]){
       linkIdxs <- which(classifDf[,3] == "link")
       lapply(seq_along(linkIdxs), function(x){

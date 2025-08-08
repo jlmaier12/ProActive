@@ -4,7 +4,7 @@
 \alias{classifSumm}
 \title{Summarizes pattern-matching results}
 \usage{
-classifSumm(pileup, bestMatchList, windowSize, mode, chunkSize)
+classifSumm(pileup, bestMatchList, windowSize, mode, chunkContigs, chunkSize)
 }
 \arguments{
 \item{pileup}{A .txt file containing mapped sequencing read coverages averaged over
@@ -17,6 +17,10 @@ all contigs/chunks classified by `ProActive()` pattern-matching}
 Options are 100, 200, 500, 1000 ONLY. Default is 1000.}
 
 \item{mode}{Either "genome" or "metagenome"}
+
+\item{chunkContigs}{TRUE or FALSE, If TRUE and `mode`="metagenome", contigs longer
+than the `chunkSize` will be 'chunked' into smaller subsets and pattern-matching
+will be performed on each subset. Default is FALSE.}
 
 \item{chunkSize}{If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
 chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.}

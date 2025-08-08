@@ -12,7 +12,7 @@ genomeChunks(pileup, chunkSize)
 
 \item{chunkSize}{If `mode`="genome" OR if `mode`="metagenome" and `chunkContigs`=TRUE,
 chunk the genome or contigs, respectively, into smaller subsets for pattern-matching.
-`chunkSize` determines the size (in bp) of each 'chunk'. Default is 50000.}
+`chunkSize` determines the size (in bp) of each 'chunk'. Default is 100000.}
 }
 \description{
 Subset genome pileup into chunks for pattern-matching
